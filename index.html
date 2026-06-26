@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pojistný konfigurátor</title>
+<style>
+:root {
+  --green: #1B3C34;
+  --green-bg: #EEF3F1;
+  --border: #D4D9D7;
+  --text: #1A2320;
+  --text-muted: #697472;
+  --bg-page: #F2F4F3;
+  --bg-card: #FFFFFF;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 7px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg-page);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-bottom: 230px;
+}
+
+.container { max-width: 1000px; margin: 0 auto; padding: 36px 24px; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 28px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 2px; }
+.section-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); }
+.section-note { font-size: 13px; color: var(--text-muted); }
+
+/* ── CARD ── */
+.card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1.5px solid var(--border); padding: 20px 22px; margin-bottom: 10px; }
+
+/* ── TOGGLE SWITCH ── */
+.toggle-switch { position: relative; display: inline-block; width: 46px; height: 27px; flex-shrink: 0; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; background: #BFC8C5; border-radius: 14px; transition: background 0.2s; cursor: pointer; }
+.toggle-track::before { content: ''; position: absolute; width: 23px; height: 23px; left: 2px; top: 2px; background: #fff; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,.18); transition: transform 0.2s; }
+.toggle-switch input:checked + .toggle-track { background: var(--green); }
+.toggle-switch input:checked + .toggle-track::before { transform: translateX(19px); }
+.toggle-switch.disabled { opacity: 0.38; pointer-events: none; cursor: not-allowed; }
+
+/* ── TOGGLE ROW ── */
+.toggle-row { display: flex; align-items: flex-start; gap: 13px; }
+.toggle-label { flex: 1; }
+.toggle-label .tl-name { font-size: 16px; font-weight: 600; color: var(--text); display: block; margin-top: 1px; }
+.toggle-label .tl-desc { font-size: 14px; color: var(--text-muted); margin-top: 2px; display: block; }
+
+/* ── INFO LINK ── */
+.info-link { background: none; border: none; padding: 0; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--green); cursor: pointer; text-decoration: underline; margin-top: 5px; display: inline-block; text-align: left; }
+.info-link:hover { opacity: 0.7; }
+
+/* ── TOGGLE CONTENT ── */
+.toggle-content { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.38s ease, opacity 0.28s ease, padding 0.3s ease; }
+.toggle-content.is-open { max-height: 1400px; opacity: 1; padding-top: 20px; }
+
+/* ── BUTTON GROUP ── */
+.btn-group { display: flex; gap: 8px; flex-wrap: nowrap; }
+.btn-option { flex: 1; min-width: 0; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; font-family: inherit; }
+.btn-option:hover { border-color: #8FADA8; }
+.btn-option.is-selected { border-color: var(--green); background: var(--green-bg); }
+.btn-option .bn { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
+.btn-option .bs { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.btn-option.is-selected .bn, .btn-option.is-selected .bs { color: var(--green); }
+
+/* ── VEHICLE INPUT ── */
+.input-row { display: flex; gap: 12px; align-items: flex-start; max-width: 65%; }
+.field-wrap { flex: 1; }
+.field-wrap label, .select-wrap label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+.field-wrap label sup { color: #c53030; }
+.vehicle-options { display: flex; align-items: center; gap: 10px; }
+.vehicle-options input { flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; transition: border-color 0.15s; min-width: 0; }
+.vehicle-options input:focus { outline: none; border-color: var(--green); }
+.vehicle-options input::placeholder { color: var(--green); }
+.vehicle-options input:focus::placeholder { opacity: 0.4; }
+.vo-nebo { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+.btn-odhad { flex-shrink: 0; padding: 10px 16px; border: 1.5px solid var(--green); border-radius: var(--radius-sm); background: #fff; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--green); cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+.btn-odhad:hover { background: var(--green); color: #fff; }
+.select-wrap { flex: 0 0 190px; }
+.styled-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 34px 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23697472' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border-color 0.15s; }
+.styled-select:focus { outline: none; border-color: var(--green); }
+
+/* ── COVERAGE ── */
+.coverage-section-label { font-size: 13px; font-weight: 600; color: var(--text); margin: 20px 0 10px; }
+.coverage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.cov-card { border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px 15px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.cov-card:hover { border-color: #8FADA8; }
+.cov-card.is-selected { border-color: var(--green); background: var(--green-bg); }
+.cov-header { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+.cov-name { font-size: 14px; font-weight: 600; }
+.badge-rec { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; background: var(--green); color: #fff; padding: 2px 7px; border-radius: 20px; }
+.cov-price { font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 3px; }
+.cov-price .per-yr { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+.cov-price-placeholder { font-size: 13px; color: var(--text-muted); font-style: italic; }
+.cov-range { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+.cov-features { list-style: none; }
+.cov-features li { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; padding: 2.5px 0; color: var(--text); }
+.fi { flex-shrink: 0; width: 14px; font-style: normal; }
+.fi-ok { color: var(--green); font-weight: 600; }
+.fi-no { color: #B2BFBC; }
+
+/* ── SESTAVÍM SI SÁM BUTTON ── */
+.btn-vlastni { display: flex; align-items: center; gap: 7px; width: 100%; margin-top: 10px; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s, color 0.15s; }
+.btn-vlastni:hover { border-color: #8FADA8; }
+.btn-vlastni.is-selected { border-color: var(--green); background: var(--green-bg); color: var(--green); }
+.vlastni-chev { flex-shrink: 0; transition: transform 0.25s ease; }
+.btn-vlastni.is-selected .vlastni-chev { transform: rotate(180deg); }
+
+/* ── CUSTOM SECTION ── */
+.custom-section { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease; }
+.custom-section.is-open { max-height: 900px; opacity: 1; padding-top: 16px; }
+
+/* ── CUSTOM NOTICE ── */
+.custom-notice { display: inline-flex; align-items: flex-start; gap: 10px; background: #FFFBEB; border: 1.5px solid #E6C640; border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 16px; margin-bottom: 14px; }
+.custom-notice.is-hidden { display: none; }
+.cn-icon { flex-shrink: 0; margin-top: 1px; color: #B59200; }
+.cn-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+.cn-link { background: none; border: none; padding: 0; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--green); text-decoration: underline; cursor: pointer; }
+.peril-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.peril-row:last-child { border-bottom: none; padding-bottom: 4px; }
+.peril-levels { margin-top: 6px; padding-left: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.peril-levels.is-hidden { display: none; }
+.btn-option-sm { flex: none; padding: 6px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; cursor: pointer; font-family: inherit; transition: border-color 0.15s, background 0.15s; }
+.btn-option-sm .bn { display: block; font-size: 13px; font-weight: 500; color: var(--text); }
+.btn-option-sm .bs { display: block; font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+.btn-option-sm:hover { border-color: #8FADA8; }
+.btn-option-sm.is-selected { border-color: var(--green); background: var(--green-bg); }
+.btn-option-sm.is-selected .bn, .btn-option-sm.is-selected .bs { color: var(--green); }
+.peril-row .toggle-row-sm { align-items: flex-start; }
+.peril-row .toggle-row-sm .toggle-switch { margin-top: 1px; }
+.custom-peril-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 28px; }
+.custom-peril-grid .peril-row { border-bottom: none; padding: 14px 0; }
+.custom-peril-grid .peril-row:nth-child(-n+2) { border-top: none; }
+.custom-peril-grid .peril-row:nth-child(1), .custom-peril-grid .peril-row:nth-child(2) { border-bottom: 1px solid var(--border); }
+.custom-total { margin-top: 14px; font-size: 14px; font-weight: 600; color: var(--green); }
+.no-vehicle .peril-levels .btn-option-sm .bs { display: none; }
+.no-vehicle .custom-peril-grid { opacity: 0.38; pointer-events: none; user-select: none; }
+.no-vehicle #coverage-group { opacity: 0.38; pointer-events: none; user-select: none; }
+
+/* ── SUBSECTION HEADER ── */
+.sub-header { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+.sub-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 6px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+.toggle-row-sm { display: flex; align-items: center; gap: 12px; }
+.toggle-label-sm { font-size: 14px; font-weight: 500; color: var(--text); }
+
+/* ── CHECKBOXES ── */
+.checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 28px; }
+.cb-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none; }
+.cb-item input[type="checkbox"] { display: none; }
+.cb-box { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border); background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: background 0.15s, border-color 0.15s; }
+.cb-item input:checked + .cb-box { background: var(--green); border-color: var(--green); }
+.cb-item input:checked + .cb-box::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(42deg) translate(0, -1px); }
+.cb-wrap { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.cb-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.cb-label { font-size: 14px; color: var(--text); }
+.cb-price { font-size: 13px; color: var(--green); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+.cb-help { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+.cb-info-link { font-size: 12px; margin-top: 0; }
+
+/* ── HIDDEN ADDONS ── */
+.hidden-addons { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s ease, opacity 0.25s ease; }
+.hidden-addons.is-open { max-height: 600px; opacity: 1; margin-top: 14px; }
+.expand-btn { background: none; border: none; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--green); cursor: pointer; padding: 0; margin-top: 16px; display: inline-flex; align-items: center; gap: 4px; }
+.expand-btn:hover { text-decoration: underline; }
+
+/* ── SECTION TITLE (doplňková) ── */
+.dopln-header { display: flex; align-items: baseline; gap: 9px; margin-bottom: 16px; }
+.dopln-title { font-size: 16px; font-weight: 600; }
+.dopln-sub { font-size: 13px; color: var(--text-muted); }
+
+/* ── FOOTER NAV ── */
+.footer-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 99; background: var(--bg-page); border-top: 1px solid var(--border); padding: 12px 24px 18px; display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+.btn-zpet { background: none; border: none; font-family: inherit; font-size: 15px; font-weight: 500; color: var(--text-muted); cursor: pointer; padding: 10px 14px; border-radius: 8px; transition: color 0.15s, background 0.15s; }
+.btn-zpet:hover { color: var(--text); background: rgba(0,0,0,.04); }
+.btn-pokracovat-nav { background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 12px 32px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.btn-pokracovat-nav:hover { opacity: 0.88; }
+
+/* ── STICKY BAR ── */
+.sticky-bar { position: fixed; bottom: 66px; left: 0; right: 0; z-index: 100; padding: 0 16px 14px; }
+.bar-inner {
+  max-width: 1000px; margin: 0 auto;
+  background: var(--green);
+  border-radius: 14px;
+  box-shadow: 0 -2px 32px rgba(0,0,0,.22), 0 4px 24px rgba(0,0,0,.14);
+  overflow: hidden;
+}
+
+/* period selector */
+.bar-period-row { display: flex; gap: 6px; padding: 12px 20px 0; }
+.period-btn {
+  padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  border: 1.5px solid rgba(255,255,255,.3); background: transparent;
+  color: rgba(255,255,255,.65); cursor: pointer; font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.period-btn:hover { border-color: rgba(255,255,255,.6); color: rgba(255,255,255,.9); }
+.period-btn.is-selected { background: rgba(255,255,255,.18); color: #fff; border-color: rgba(255,255,255,.55); }
+
+/* bar top */
+.bar-top { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 12px; cursor: pointer; user-select: none; }
+.bar-top:hover { background: rgba(255,255,255,.05); }
+.bar-summary { display: flex; align-items: baseline; gap: 7px; }
+.bar-label { font-size: 14px; color: rgba(255,255,255,.7); }
+.bar-price { font-size: 22px; font-weight: 700; color: #fff; }
+.bar-period-label { font-size: 14px; color: rgba(255,255,255,.7); }
+.bar-note { font-size: 12px; color: rgba(255,255,255,.55); margin-left: 2px; }
+.bar-chevron { transition: transform 0.25s ease; color: rgba(255,255,255,.7); }
+.bar-chevron.up { transform: rotate(180deg); }
+
+/* bar expanded */
+.bar-body { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; background: #fff; }
+.bar-body.is-open { max-height: 600px; }
+.bar-breakdown { padding: 14px 20px 10px; }
+.bd-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text); padding: 5px 0; }
+.bd-row.bd-placeholder { color: var(--text-muted); font-style: italic; }
+.bd-row.total-row { font-weight: 700; font-size: 15px; border-top: 1px solid var(--border); margin-top: 6px; padding-top: 10px; justify-content: flex-end; }
+.total-period { font-weight: 400; color: var(--text-muted); margin-left: 3px; }
+.bar-cta { padding: 0 20px 16px; }
+.btn-pokracovat { width: 100%; background: #fff; color: var(--green); border: none; border-radius: 10px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.btn-pokracovat:hover { opacity: 0.88; }
+
+/* ── MODALS ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.48); z-index: 300; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.is-open { display: flex; }
+.modal-box { background: #fff; border-radius: 20px; width: 100%; max-width: 680px; padding: 32px 40px 36px; position: relative; animation: modal-in 0.2s ease; }
+@keyframes modal-in { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+.modal-header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-bottom: 20px; }
+.modal-title { font-size: 19px; font-weight: 700; grid-column: 2; text-align: center; white-space: nowrap; }
+.modal-close { background: none; border: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--text-muted); padding: 4px; grid-column: 3; justify-self: end; transition: color 0.15s; }
+.modal-close:hover { color: var(--text); }
+.modal-divider { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+
+/* odhad modal */
+.modal-row { display: flex; gap: 16px; margin-bottom: 20px; }
+.modal-field { flex: 1; }
+.modal-input { width: 100%; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 18px; font-size: 15px; font-family: inherit; color: var(--text); background: #fff; transition: border-color 0.15s; }
+.modal-input:focus { outline: none; border-color: var(--green); }
+.modal-input::placeholder { color: #AFBBB8; }
+.modal-select { width: 100%; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 40px 14px 18px; font-size: 15px; font-family: inherit; color: var(--text); background: #fff; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='8' fill='none'%3E%3Cpath d='M1 1.5l5.5 5.5 5.5-5.5' stroke='%23697472' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; transition: border-color 0.15s; }
+.modal-select:focus { outline: none; border-color: var(--green); }
+.modal-checks { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+.modal-checks .cb-item { flex: 1; min-width: 200px; }
+.btn-calc { display: block; margin: 0 auto; background: var(--green); color: #fff; border: none; border-radius: 40px; padding: 15px 52px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; white-space: nowrap; }
+.btn-calc:hover { opacity: 0.88; }
+
+/* info modal */
+.info-content { font-size: 15px; line-height: 1.75; color: var(--text); }
+.info-content p { margin-bottom: 14px; }
+.info-content p:last-child { margin-bottom: 0; }
+.info-content strong { color: var(--green); }
+.info-content .info-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.info-content .info-row dt { font-weight: 600; color: var(--green); min-width: 80px; }
+.btn-info-ok { display: block; margin: 24px auto 0; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 12px 36px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+.btn-info-ok:hover { opacity: 0.88; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  .container { padding: 20px 14px; }
+  .btn-group { flex-wrap: wrap; }
+  .btn-option { flex: none; min-width: calc(50% - 4px); }
+  .coverage-grid { grid-template-columns: 1fr; }
+  .input-row { flex-direction: column; max-width: 100%; }
+  .select-wrap { flex: none; width: 100%; }
+  .vehicle-options { flex-direction: column; align-items: stretch; }
+  .vo-nebo { text-align: center; }
+  .btn-odhad { width: 100%; text-align: center; }
+  .checkbox-grid { grid-template-columns: 1fr; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .sticky-bar { padding: 0 10px 10px; }
+  .bar-period-row { padding: 10px 14px 0; }
+  .bar-top { padding: 8px 14px 10px; }
+  .bar-price { font-size: 19px; }
+  .bar-breakdown { padding: 10px 14px 8px; }
+  .bar-cta { padding: 4px 14px 16px; }
+  .modal-box { padding: 24px 20px 28px; }
+  .modal-row { flex-direction: column; }
+  .modal-title { font-size: 16px; white-space: normal; text-align: center; }
+  .modal-checks { flex-direction: column; gap: 12px; }
+  .custom-peril-grid { grid-template-columns: 1fr; }
+  .custom-peril-grid .peril-row:nth-child(1), .custom-peril-grid .peril-row:nth-child(2) { border-bottom: none; }
+  .footer-nav { padding: 10px 14px 14px; }
+  .btn-pokracovat-nav { flex: 1; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ══ Hlavní pojištění ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Hlavní pojištění</span>
+    </div>
+
+    <!-- Povinné ručení -->
+    <div class="card">
+      <div class="toggle-row" id="row-povinne">
+        <label class="toggle-switch" id="sw-povinne">
+          <input type="checkbox" id="tog-povinne" checked>
+          <span class="toggle-track"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="tl-name">Povinné ručení</span>
+          <span class="tl-desc">Zákonný základ. Vyberte limit plnění.</span>
+          <button class="info-link" data-info="pr">Zjistit více o Povinném ručení</button>
+        </div>
+      </div>
+      <div class="toggle-content" id="tc-povinne">
+        <div class="btn-group" id="limit-group">
+          <button class="btn-option" data-limit="50" data-price="6309"><span class="bn">50 mil.</span><span class="bs">6 309 Kč</span></button>
+          <button class="btn-option" data-limit="100" data-price="6586"><span class="bn">100 mil.</span><span class="bs">6 586 Kč</span></button>
+          <button class="btn-option is-selected" data-limit="150" data-price="6717"><span class="bn">150 mil.</span><span class="bs">6 717 Kč</span></button>
+          <button class="btn-option" data-limit="200" data-price="6979"><span class="bn">200 mil.</span><span class="bs">6 979 Kč</span></button>
+          <button class="btn-option" data-limit="250" data-price="7117"><span class="bn">250 mil.</span><span class="bs">7 117 Kč</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Havarijní pojištění -->
+    <div class="card">
+      <div class="toggle-row" id="row-havarijni">
+        <label class="toggle-switch" id="sw-havarijni">
+          <input type="checkbox" id="tog-havarijni" checked>
+          <span class="toggle-track"></span>
+        </label>
+        <div class="toggle-label">
+          <span class="tl-name">Havarijní pojištění</span>
+          <span class="tl-desc">Kryje i vlastní auto. Pro výpočet potřebujeme jeho hodnotu — bez ní cenu nespočítáme.</span>
+          <button class="info-link" data-info="havarijni">Zjistit více o Havarijním pojištění</button>
+        </div>
+      </div>
+      <div class="toggle-content" id="tc-havarijni">
+        <div class="input-row">
+          <div class="field-wrap">
+            <label>Hodnota vozidla <sup>*</sup></label>
+            <div class="vehicle-options">
+              <input type="text" id="vehicle-input" placeholder="zadejte částku">
+              <span class="vo-nebo">nebo</span>
+              <button class="btn-odhad" id="btn-odhad">spočítat odhad</button>
+            </div>
+          </div>
+          <div class="select-wrap">
+            <label>Spoluúčast</label>
+            <select class="styled-select" id="spoluucast">
+              <option>5 % / min. 5 000</option>
+              <option>10 % / min. 5 000</option>
+              <option>5 % / min. 10 000</option>
+              <option>10 % / min. 10 000</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="custom-notice" id="custom-notice">
+          <svg class="cn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#B59200" stroke-width="1.5"/><path d="M8 7v4" stroke="#B59200" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#B59200"/></svg>
+          <span class="cn-text">Cenu spočítáme po zadání hodnoty vozidla. <button class="cn-link" id="cn-anchor">Zadat hodnotu →</button></span>
+        </div>
+
+        <div class="coverage-section-label">Rozsah krytí</div>
+        <div id="coverage-group">
+          <div class="coverage-grid">
+            <div class="cov-card" data-tier="zaklad">
+              <div class="cov-header"><span class="cov-name">Základ</span></div>
+              <div class="cov-price"><span id="cpv-zaklad" class="cov-price-placeholder">zadejte hodnotu</span><span class="per-yr"> /rok</span></div>
+              <div class="cov-range">Plnění do 100 000 Kč</div>
+              <ul class="cov-features">
+                <li><i class="fi fi-ok">✓</i> Střet a poškození zvířaty</li>
+                <li><i class="fi fi-ok">✓</i> Odcizení a vandalismus</li>
+                <li><i class="fi fi-ok">✓</i> Přírodní nebezpečí</li>
+                <li><i class="fi fi-no">✕</i> Dopravní nehoda</li>
+              </ul>
+            </div>
+            <div class="cov-card" data-tier="standard">
+              <div class="cov-header"><span class="cov-name">Standard</span><span class="badge-rec">Doporučeno</span></div>
+              <div class="cov-price"><span id="cpv-standard" class="cov-price-placeholder">zadejte hodnotu</span><span class="per-yr"> /rok</span></div>
+              <div class="cov-range">Plnění do hodnoty vozidla</div>
+              <ul class="cov-features">
+                <li><i class="fi fi-ok">✓</i> Střet a poškození zvířaty</li>
+                <li><i class="fi fi-ok">✓</i> Odcizení a vandalismus</li>
+                <li><i class="fi fi-ok">✓</i> Přírodní nebezpečí</li>
+                <li><i class="fi fi-no">✕</i> Dopravní nehoda</li>
+              </ul>
+            </div>
+            <div class="cov-card" data-tier="komplet">
+              <div class="cov-header"><span class="cov-name">Komplet</span></div>
+              <div class="cov-price"><span id="cpv-komplet" class="cov-price-placeholder">zadejte hodnotu</span><span class="per-yr"> /rok</span></div>
+              <div class="cov-range">Plnění do hodnoty vozidla</div>
+              <ul class="cov-features">
+                <li><i class="fi fi-ok">✓</i> Střet a poškození zvířaty</li>
+                <li><i class="fi fi-ok">✓</i> Odcizení a vandalismus</li>
+                <li><i class="fi fi-ok">✓</i> Přírodní nebezpečí</li>
+                <li><i class="fi fi-ok">✓</i> Dopravní nehoda</li>
+              </ul>
+            </div>
+          </div>
+          <button class="btn-vlastni" data-tier="vlastni" id="btn-vlastni">
+            <svg class="vlastni-chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Sestavím si sám
+          </button>
+        </div>
+
+        <div class="custom-section" id="custom-section">
+        <div class="custom-peril-grid">
+          <div class="peril-row">
+            <div class="toggle-row-sm">
+              <label class="toggle-switch"><input type="checkbox" id="cp-nehoda" checked><span class="toggle-track"></span></label>
+              <div><span class="toggle-label-sm">Dopravní nehoda</span><br><button class="info-link cb-info-link" data-info="p-nehoda">Co myslíme dopravní nehodou</button></div>
+            </div>
+            <div class="peril-levels" id="pl-nehoda">
+              <button class="btn-option-sm is-selected" data-peril="nehoda" data-level="hod"><span class="bn">na hodnotu vozidla</span><span class="bs" id="ps-nehoda-hod">dle hodnoty</span></button>
+              <button class="btn-option-sm" data-peril="nehoda" data-level="100k"><span class="bn">100 000 Kč</span><span class="bs">4 000 Kč</span></button>
+              <button class="btn-option-sm" data-peril="nehoda" data-level="70k"><span class="bn">70 000 Kč</span><span class="bs">2 800 Kč</span></button>
+              <button class="btn-option-sm" data-peril="nehoda" data-level="50k"><span class="bn">50 000 Kč</span><span class="bs">2 000 Kč</span></button>
+              <button class="btn-option-sm" data-peril="nehoda" data-level="20k"><span class="bn">20 000 Kč</span><span class="bs">800 Kč</span></button>
+            </div>
+          </div>
+          <div class="peril-row">
+            <div class="toggle-row-sm">
+              <label class="toggle-switch"><input type="checkbox" id="cp-odcizeni" checked><span class="toggle-track"></span></label>
+              <div><span class="toggle-label-sm">Odcizení a vandalismus</span><br><button class="info-link cb-info-link" data-info="p-odcizeni">Co myslíme odcizením a vandalismem</button></div>
+            </div>
+            <div class="peril-levels" id="pl-odcizeni">
+              <button class="btn-option-sm is-selected" data-peril="odcizeni" data-level="hod"><span class="bn">na hodnotu vozidla</span><span class="bs" id="ps-odcizeni-hod">dle hodnoty</span></button>
+              <button class="btn-option-sm" data-peril="odcizeni" data-level="100k"><span class="bn">100 000 Kč</span><span class="bs">2 500 Kč</span></button>
+              <button class="btn-option-sm" data-peril="odcizeni" data-level="70k"><span class="bn">70 000 Kč</span><span class="bs">1 750 Kč</span></button>
+              <button class="btn-option-sm" data-peril="odcizeni" data-level="50k"><span class="bn">50 000 Kč</span><span class="bs">1 250 Kč</span></button>
+              <button class="btn-option-sm" data-peril="odcizeni" data-level="20k"><span class="bn">20 000 Kč</span><span class="bs">500 Kč</span></button>
+            </div>
+          </div>
+          <div class="peril-row">
+            <div class="toggle-row-sm">
+              <label class="toggle-switch"><input type="checkbox" id="cp-prirodni" checked><span class="toggle-track"></span></label>
+              <div><span class="toggle-label-sm">Přírodní nebezpečí</span><br><button class="info-link cb-info-link" data-info="p-prirodni">Co myslíme přírodním nebezpečím</button></div>
+            </div>
+            <div class="peril-levels" id="pl-prirodni">
+              <button class="btn-option-sm is-selected" data-peril="prirodni" data-level="hod"><span class="bn">na hodnotu vozidla</span><span class="bs" id="ps-prirodni-hod">dle hodnoty</span></button>
+              <button class="btn-option-sm" data-peril="prirodni" data-level="100k"><span class="bn">100 000 Kč</span><span class="bs">1 200 Kč</span></button>
+              <button class="btn-option-sm" data-peril="prirodni" data-level="70k"><span class="bn">70 000 Kč</span><span class="bs">840 Kč</span></button>
+              <button class="btn-option-sm" data-peril="prirodni" data-level="50k"><span class="bn">50 000 Kč</span><span class="bs">600 Kč</span></button>
+              <button class="btn-option-sm" data-peril="prirodni" data-level="20k"><span class="bn">20 000 Kč</span><span class="bs">240 Kč</span></button>
+            </div>
+          </div>
+          <div class="peril-row">
+            <div class="toggle-row-sm">
+              <label class="toggle-switch"><input type="checkbox" id="cp-zvirata" checked><span class="toggle-track"></span></label>
+              <div><span class="toggle-label-sm">Střet se zvířaty</span><br><button class="info-link cb-info-link" data-info="p-zvirata">Co myslíme střetem se zvířaty</button></div>
+            </div>
+            <div class="peril-levels" id="pl-zvirata">
+              <button class="btn-option-sm is-selected" data-peril="zvirata" data-level="hod"><span class="bn">na hodnotu vozidla</span><span class="bs" id="ps-zvirata-hod">dle hodnoty</span></button>
+              <button class="btn-option-sm" data-peril="zvirata" data-level="100k"><span class="bn">100 000 Kč</span><span class="bs">1 000 Kč</span></button>
+              <button class="btn-option-sm" data-peril="zvirata" data-level="70k"><span class="bn">70 000 Kč</span><span class="bs">700 Kč</span></button>
+              <button class="btn-option-sm" data-peril="zvirata" data-level="50k"><span class="bn">50 000 Kč</span><span class="bs">500 Kč</span></button>
+              <button class="btn-option-sm" data-peril="zvirata" data-level="20k"><span class="bn">20 000 Kč</span><span class="bs">200 Kč</span></button>
+            </div>
+          </div>
+        </div>
+          <div class="custom-total" id="custom-total"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Doplňky ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Doplňky</span>
+    </div>
+
+    <!-- Asistenční služby -->
+    <div class="card">
+      <div class="sub-header">Asistenční služby</div>
+      <div class="sub-desc">Když auto nepojede. Vyberte úroveň.</div>
+      <button class="info-link" data-info="asistence" style="margin-bottom: 14px;">Zjistit více o Asistenčních službách</button>
+      <div class="btn-group" id="asistence-group">
+        <button class="btn-option" data-asist="s" data-price="0"><span class="bn">S</span><span class="bs">0 Kč</span></button>
+        <button class="btn-option is-selected" data-asist="m" data-price="599"><span class="bn">M</span><span class="bs">599 Kč</span></button>
+        <button class="btn-option" data-asist="l" data-price="1399"><span class="bn">L</span><span class="bs">1 399 Kč</span></button>
+        <button class="btn-option" data-asist="xl" data-price="4999"><span class="bn">XL</span><span class="bs">4 999 Kč</span></button>
+      </div>
+      <hr class="divider" id="nahradni-divider" style="display:none">
+      <div class="toggle-row-sm" id="nahradni-row" style="display:none">
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-nahradni">
+          <span class="toggle-track"></span>
+        </label>
+        <span class="toggle-label-sm">Náhradní vozidlo při opravě</span>
+      </div>
+    </div>
+
+    <!-- Doplňková pojištění -->
+    <div class="card">
+      <div class="dopln-header">
+        <span class="dopln-title">Doplňková pojištění</span>
+        <span class="dopln-sub">přidejte, co dává smysl</span>
+      </div>
+      <div class="checkbox-grid">
+        <label class="cb-item">
+          <input type="checkbox" id="a-skla" data-price="279" data-name="Pojištění skel" checked>
+          <span class="cb-box"></span>
+          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Pojištění skel</span><span class="cb-price">+ 279 Kč/rok</span></span><button class="info-link cb-info-link" data-info="skla">Co myslíme pojištěním skel</button></span>
+        </label>
+        <label class="cb-item">
+          <input type="checkbox" id="a-nezavinena" data-price="229" data-name="Nezaviněná bouračka" checked>
+          <span class="cb-box"></span>
+          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Nezaviněná bouračka</span><span class="cb-price">+ 229 Kč/rok</span></span><button class="info-link cb-info-link" data-info="nezavinena">Co myslíme nezaviněnou bouračkou</button></span>
+        </label>
+        <label class="cb-item">
+          <input type="checkbox" id="a-sedacky" data-price="149" data-name="Dětské sedačky a zavazadla">
+          <span class="cb-box"></span>
+          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Dětské sedačky a zavazadla</span><span class="cb-price">+ 149 Kč/rok</span></span><button class="info-link cb-info-link" data-info="sedacky">Co myslíme dětskými sedačkami a zavazadly</button></span>
+        </label>
+        <label class="cb-item">
+          <input type="checkbox" id="a-garance" data-price="189" data-name="Garance ceny na 3 roky" checked>
+          <span class="cb-box"></span>
+          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Garance ceny na 3 roky</span><span class="cb-price">+ 189 Kč/rok</span></span><button class="info-link cb-info-link" data-info="garance">Co myslíme garancí ceny na 3 roky</button></span>
+        </label>
+        <label class="cb-item">
+          <input type="checkbox" id="a-urazove" data-price="319" data-name="Úrazové poj. řidiče a cestujících">
+          <span class="cb-box"></span>
+          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Úrazové poj. řidiče a cestujících</span><span class="cb-price">+ 319 Kč/rok</span></span><button class="info-link cb-info-link" data-info="urazove">Co myslíme úrazovým pojištěním řidiče a cestujících</button></span>
+        </label>
+        <label class="cb-item">
+          <input type="checkbox" id="a-smrt" data-price="99" data-name="Smrt obou rodičů ve vozidle">
+          <span class="cb-box"></span>
+          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Smrt obou rodičů ve vozidle</span><span class="cb-price">+ 99 Kč/rok</span></span><button class="info-link cb-info-link" data-info="smrt">Co myslíme smrtí obou rodičů ve vozidle</button></span>
+        </label>
+      </div>
+
+      <div class="hidden-addons" id="extra-addons">
+        <div class="checkbox-grid">
+          <label class="cb-item">
+            <input type="checkbox" id="a-pravni" data-price="199" data-name="Právní ochrana">
+            <span class="cb-box"></span>
+            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Právní ochrana</span><span class="cb-price">+ 199 Kč/rok</span></span><button class="info-link cb-info-link" data-info="pravni">Co myslíme právní ochranou</button></span>
+          </label>
+          <label class="cb-item">
+            <input type="checkbox" id="a-pneumatiky" data-price="249" data-name="Pneumatiky a disky">
+            <span class="cb-box"></span>
+            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Pneumatiky a disky</span><span class="cb-price">+ 249 Kč/rok</span></span><button class="info-link cb-info-link" data-info="pneumatiky">Co myslíme pneumatikami a disky</button></span>
+          </label>
+          <label class="cb-item">
+            <input type="checkbox" id="a-gap" data-price="349" data-name="GAP pojištění">
+            <span class="cb-box"></span>
+            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">GAP pojištění</span><span class="cb-price">+ 349 Kč/rok</span></span><button class="info-link cb-info-link" data-info="gap">Co myslíme GAP pojištěním</button></span>
+          </label>
+          <label class="cb-item">
+            <input type="checkbox" id="a-zavazadla" data-price="129" data-name="Zavazadla">
+            <span class="cb-box"></span>
+            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Zavazadla</span><span class="cb-price">+ 129 Kč/rok</span></span><button class="info-link cb-info-link" data-info="zavazadla">Co myslíme zavazadly</button></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="expand-btn" id="btn-more">+ Zobrazit další pojištění (4)</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ STICKY BAR ══ -->
+<div class="sticky-bar">
+  <div class="bar-inner">
+    <div class="bar-period-row">
+      <button class="period-btn is-selected" data-divisor="1" data-lbl="/rok">Ročně</button>
+      <button class="period-btn" data-divisor="2" data-lbl="/6 měs.">Pololetně</button>
+      <button class="period-btn" data-divisor="4" data-lbl="/čtvrtletí">Čtvrtletně</button>
+    </div>
+    <div class="bar-top" id="bar-toggle">
+      <div class="bar-summary">
+        <span class="bar-label">Celkem</span>
+        <span class="bar-price" id="bar-total">—</span>
+        <span class="bar-period-label" id="bar-period-lbl">/rok</span>
+        <span class="bar-note" id="bar-note">+ havarijní</span>
+      </div>
+      <svg class="bar-chevron" id="bar-chev" width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M5 13l6-6 6 6" stroke="rgba(255,255,255,.7)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="bar-body" id="bar-body">
+      <div class="bar-breakdown" id="bar-breakdown"></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-nav">
+  <button class="btn-zpet">Zpět</button>
+  <button class="btn-pokracovat-nav">Pokračovat</button>
+</div>
+
+<!-- ══ MODAL: Výpočet hodnoty ══ -->
+<div class="modal-overlay" id="modal-odhad">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span></span>
+      <span class="modal-title">Výpočet přibližné hodnoty vozidla</span>
+      <button class="modal-close" data-close="modal-odhad">✕</button>
+    </div>
+    <hr class="modal-divider">
+    <div class="modal-row">
+      <div class="modal-field">
+        <input type="text" class="modal-input" id="modal-km" placeholder="Počet najetých kilometrů">
+      </div>
+      <div class="modal-field">
+        <select class="modal-select" id="modal-karoserie">
+          <option value="" disabled selected>Typ karoserie</option>
+          <option value="sedan">Sedan</option>
+          <option value="suv">SUV / Terénní</option>
+          <option value="hatchback">Hatchback</option>
+          <option value="combi">Kombi</option>
+          <option value="coupe">Coupé / Kabriolet</option>
+          <option value="van">Van / Minivan</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-checks">
+      <label class="cb-item">
+        <input type="checkbox" id="modal-4x4">
+        <span class="cb-box"></span>
+        <span class="cb-label">Je vozidlo vybaveno pohonem všech kol (4x4)?</span>
+      </label>
+      <label class="cb-item">
+        <input type="checkbox" id="modal-auto">
+        <span class="cb-box"></span>
+        <span class="cb-label">Je vozidlo vybaveno automatickou převodovkou?</span>
+      </label>
+    </div>
+    <button class="btn-calc" id="btn-modal-calc">Spočítat hodnotu</button>
+  </div>
+</div>
+
+<!-- ══ MODAL: Info ══ -->
+<div class="modal-overlay" id="modal-info">
+  <div class="modal-box" style="max-width: 600px;">
+    <div class="modal-header">
+      <span></span>
+      <span class="modal-title" id="info-title"></span>
+      <button class="modal-close" data-close="modal-info">✕</button>
+    </div>
+    <hr class="modal-divider">
+    <div class="info-content" id="info-body"></div>
+    <button class="btn-info-ok" data-close="modal-info">Rozumím</button>
+  </div>
+</div>
+
+<script>
+// ── INFO CONTENT ──────────────────────────────────────────
+const INFO = {
+  pr: {
+    title: 'Povinné ručení',
+    html: `<p>Povinné ručení (zákonná odpovědnost z provozu vozidla) kryje škody způsobené vaším vozidlem třetím osobám — poškozená auta, zranění osob i majetkové újmy. Každé vozidlo v provozu jej musí mít ze zákona sjednáno.</p>
+<p><strong>Limit plnění</strong> určuje, do jaké výše pojišťovna za způsobenou škodu zaplatí. Vyšší limit = vyšší ochrana při závažných nehodách. Při vážné srážce mohou škody snadno přesáhnout 100 milionů korun — doporučujeme volit aspoň 150 mil.</p>
+<p>Cena závisí na vybraném limitu a parametrech vozidla. Pojišťovna vás pokrývá i v zahraničí v rámci zelené karty.</p>`
+  },
+  havarijni: {
+    title: 'Havarijní pojištění',
+    html: `<p>Havarijní pojištění kryje škody na vašem vlastním vozidle bez ohledu na to, kdo nehodu zavinil. Chrání vás při dopravní nehodě, odcizení vozidla, vandalismu i přírodních živlech jako krupobití nebo povodeň.</p>
+<p>Na rozdíl od povinného ručení není ze zákona povinné, ale je zásadní ochranou vaší finanční investice — zejména u novějších nebo dražších vozidel.</p>
+<p><strong>Základ</strong> — střet, odcizení, přírodní nebezpečí, plnění do 100 000 Kč.<br>
+<strong>Standard</strong> — rozšířené krytí do plné hodnoty vozidla.<br>
+<strong>Komplet</strong> — zahrnuje i dopravní nehody zaviněné řidičem.</p>`
+  },
+  asistence: {
+    title: 'Asistenční služby',
+    html: `<p>Asistenční služby zajistí odbornou pomoc, když vaše auto nepojede — ať jste doma nebo v zahraničí. Čím vyšší varianta, tím komfortnější pomoc v nouzi.</p>
+<p><strong>S</strong> — odtah do nejbližšího servisu v ČR.<br>
+<strong>M</strong> — odtah + pokus o opravu na místě + asistenční pomoc v zahraničí.<br>
+<strong>L</strong> — vše z M + náhradní vozidlo + ubytování při poruše.<br>
+<strong>XL</strong> — prémiová 24/7 asistence, osobní asistent a prioritní servis.</p>
+<p>Náhradní vozidlo při opravě je dostupné jako volitelný doplněk k variantě S.</p>`
+  },
+  skla: {
+    title: 'Pojištění skel',
+    html: `<p>Kryje opravu nebo výměnu čelního, bočních i zadního skla vašeho vozidla — bez ohledu na to, jak ke škodě došlo. Stačí kámen vyhozený z vozovky, strom, nebo vandal.</p>
+<p>U moderních aut jsou skla vybavena senzory, vyhříváním nebo kamerovými systémy. Výměna pak může snadno přesáhnout 20 000 Kč. Bez pojištění skel jde tato částka z vaší kapsy.</p>`
+  },
+  nezavinena: {
+    title: 'Nezaviněná bouračka',
+    html: `<p>Když vás poškodí jiný řidič, máte nárok na náhradu škody z jeho povinného ručení. V praxi to ale znamená komunikaci s cizí pojišťovnou, doložení dokumentace a někdy i soudní spor.</p>
+<p>Toto pojištění vám zajistí právní a administrativní podporu při uplatnění nároku — nemusíte řešit pojišťovnu viníka sami. Pojišťovna jedná za vás.</p>`
+  },
+  sedacky: {
+    title: 'Dětské sedačky a zavazadla',
+    html: `<p>Při nehodě nebo prudkém brzdění může dojít k poškození dětských sedaček i věcí v kufru. Standardní havarijní pojištění věci uvnitř vozidla zpravidla nekryje.</p>
+<p>Toto připojištění nahradí poškozené nebo zničené dětské sedačky a zavazadla — přímo z vašeho pojištění, bez nutnosti dokazovat vinu protistrany.</p>`
+  },
+  garance: {
+    title: 'Garance ceny na 3 roky',
+    html: `<p>Pojišťovna se zavazuje, že cenu vašeho pojistného po dobu 3 let nezmění — bez ohledu na inflaci, změny podmínek trhu nebo váš věk.</p>
+<p>Hodí se pro plánování rodinného rozpočtu. Bez garance si pojišťovna může cenu každý rok upravit nahoru, aniž byste s tím mohli mnoho udělat.</p>`
+  },
+  urazove: {
+    title: 'Úrazové pojištění řidiče a cestujících',
+    html: `<p>Povinné ručení kryje škody způsobené jiným osobám — ale ne vám samotným ani vašim spolucestujícím. Pokud způsobíte nehodu, jste bez dalšího pojištění nekrytí.</p>
+<p>Úrazové pojištění vyplatí odškodnění při trvalých zdravotních následcích nebo smrti způsobených dopravní nehodou — pro řidiče i všechny cestující ve vozidle.</p>`
+  },
+  smrt: {
+    title: 'Smrt obou rodičů ve vozidle',
+    html: `<p>Speciální pojištění pro případ, kdy při dopravní nehodě zemřou oba rodiče. Jde o velmi specifické, ale zároveň jedno z nejzávažnějších rizik pro rodiny s dětmi.</p>
+<p>V takovém případě pojišťovna vyplatí sjednané pojistné plnění určené pro finanční zajištění nezletilých dětí — jako záchranná síť v situaci, kdy o to méně přemýšlíme.</p>`
+  },
+  pravni: {
+    title: 'Právní ochrana',
+    html: `<p>Po dopravní nehodě může dojít ke sporu o zavinění, výši škody nebo způsobu odškodnění. Právní zastoupení stojí peníze — a pojišťovny mají vlastní právníky.</p>
+<p>Toto pojištění hradí náklady na advokáta, soudní poplatky a znalecké posudky. Hodí se zvláště u sporných nehod, kde bez právní podpory bývá těžké se domoci spravedlivého plnění.</p>`
+  },
+  pneumatiky: {
+    title: 'Pneumatiky a disky',
+    html: `<p>Poškození pneumatiky nebo disku při jízdě — například najezdem na díru, obrubník nebo cizí předmět — standardní havarijní pojištění zpravidla nekryje. Jde o poškození způsobené provozem, ne nehodou.</p>
+<p>Toto připojištění kryje výměnu poškozené pneumatiky nebo disku během jízdy, a to i v případě postupného poškozování od špatného povrchu vozovky.</p>`
+  },
+  gap: {
+    title: 'GAP pojištění',
+    html: `<p>Při totální škodě nebo krádeži vozidla pojišťovna standardně vyplatí aktuální <strong>tržní hodnotu</strong> auta — ne to, za co jste ho koupili nebo kolik zbývá na leasingu.</p>
+<p>U nových aut tržní hodnota klesá rychle — za rok ztratí klidně 20–30 % hodnoty. GAP doplatí rozdíl mezi pojistným plněním a vaší pořizovací cenou nebo výší nesplaceného leasingového dluhu.</p>`
+  },
+  zavazadla: {
+    title: 'Zavazadla',
+    html: `<p>Kryje poškození nebo odcizení osobních věcí z vozidla — při nehodě i při vloupání. Standardní havarijní pojištění věci uvnitř vozu nekryje, pojištění domácnosti zase obvykle neplatí mimo bydliště.</p>
+<p>Pojištění zavazadel tuto mezeru zaplní a nahradí věci do výše sjednané pojistné částky — bez ohledu na to, kde ke škodě došlo.</p>`
+  },
+  'p-nehoda': {
+    title: 'Dopravní nehoda',
+    html: `<p>Pojištění dopravní nehody kryje škody na vašem vozidle způsobené srážkou s jiným vozidlem, pevnou překážkou nebo při havárii, kterou jste zavinili vy. Bez tohoto pojištění hradíte opravu vlastního auta z vlastní kapsy.</p>
+<p>Jde o nejdražší složku havarijního pojištění, ale zároveň nejčastější pojistnou událost. Volba <strong>Hodnota vozidla</strong> jako úroveň krytí znamená, že pojišťovna uhradí škodu až do plné aktuální hodnoty vašeho auta.</p>`
+  },
+  'p-odcizeni': {
+    title: 'Odcizení a vandalismus',
+    html: `<p>Pokrývá případ, kdy je vaše vozidlo odcizeno nebo úmyslně poškozeno cizí osobou — poškrábání laku, rozbití skel, mechanické poškození zámků nebo karoserie.</p>
+<p>Pojistná událost se proplácí do výše sjednané úrovně krytí. Při totálním odcizení vozidla vyplatí pojišťovna aktuální tržní hodnotu auta.</p>`
+  },
+  'p-prirodni': {
+    title: 'Přírodní nebezpečí',
+    html: `<p>Kryje škody způsobené živelnými událostmi: krupobití, povodeň, záplava, úder blesku, vichřice, sesuv půdy nebo pád stromu na vozidlo.</p>
+<p>Na tyto události nemáte vliv, ale škody mohou být značné — zejména krupobití dokáže poškodit celou karoserii. Cena tohoto rizika je zpravidla nízká v poměru k potenciální škodě.</p>`
+  },
+  'p-zvirata': {
+    title: 'Střet se zvířaty',
+    html: `<p>Pokrývá škody vzniklé nárazem do zvířete — nejčastěji divokého prasete, jelena nebo srnce na silnici. Takové nehody jsou v ČR překvapivě časté, zejména v příhraničních oblastech a na lesních silnicích za tmy.</p>
+<p>Škoda se může pohybovat od poškozené mřížky chladiče po totální škodu. Pojistné za toto riziko je zpravidla velmi nízké v porovnání s potenciální škodou.</p>`
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────
+const S = {
+  povinneOn: true,
+  povinnePrice: 6717,
+  povinneLabel: '150 mil.',
+  havarijniOn: true,
+  vehicleValue: 0,
+  havarijniTier: null,
+  havarijniTierLabel: '',
+  customNehoda: true,   customNehoda_level: 'hod',
+  customOdcizeni: true, customOdcizeni_level: 'hod',
+  customPrirodni: true, customPrirodni_level: 'hod',
+  customZvirata: true,  customZvirata_level: 'hod',
+  asistencePrice: 599,
+  asistenceLabel: 'M',
+  asistenceTier: 'm',
+  periodDivisor: 1,
+  periodLabel: '/rok',
+  barOpen: false,
+  extrasOpen: false,
+};
+
+const HAV_RATE = { zaklad: 0.009, standard: 0.013, komplet: 0.017 };
+const CUSTOM_PERIL_RATE = { nehoda: 0.040, odcizeni: 0.025, prirodni: 0.012, zvirata: 0.010 };
+const CUSTOM_LEVEL_VAL = { '20k': 20000, '50k': 50000, '70k': 70000, '100k': 100000 };
+
+function havarijniPriceFor(tier) {
+  if (!tier) return null;
+  if (tier === 'vlastni') {
+    const lv = (lk) => lk === 'hod' ? (S.vehicleValue > 0 ? S.vehicleValue : null) : (CUSTOM_LEVEL_VAL[lk] || null);
+    const perils = [
+      { on: S.customNehoda,   lk: S.customNehoda_level,   rate: CUSTOM_PERIL_RATE.nehoda },
+      { on: S.customOdcizeni, lk: S.customOdcizeni_level, rate: CUSTOM_PERIL_RATE.odcizeni },
+      { on: S.customPrirodni, lk: S.customPrirodni_level, rate: CUSTOM_PERIL_RATE.prirodni },
+      { on: S.customZvirata,  lk: S.customZvirata_level,  rate: CUSTOM_PERIL_RATE.zvirata },
+    ];
+    let total = 0, hasEnabled = false;
+    for (const p of perils) {
+      if (!p.on) continue;
+      hasEnabled = true;
+      const val = lv(p.lk);
+      if (val) total += val * p.rate;
+    }
+    if (!hasEnabled) return null;
+    return total > 0 ? Math.round(total / 100) * 100 : null;
+  }
+  if (S.vehicleValue <= 0) return null;
+  return Math.round(S.vehicleValue * HAV_RATE[tier] / 100) * 100;
+}
+
+function fmtNum(n) { return n.toLocaleString('cs-CZ'); }
+function fmtPrice(n) { return fmtNum(Math.round(n)) + ' Kč'; }
+
+function calcAnnualTotal() {
+  let t = 0;
+  if (S.povinneOn) t += S.povinnePrice;
+  if (S.havarijniOn) { const hp = havarijniPriceFor(S.havarijniTier); if (hp !== null) t += hp; }
+  t += S.asistencePrice;
+  document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => {
+    if (cb.checked) t += parseInt(cb.dataset.price) || 0;
+  });
+  return t;
+}
+
+// ── TOGGLE CONSTRAINT ────────────────────────────────────
+function syncToggleConstraints() {
+  const lockPovinne = !S.havarijniOn;
+  const lockHavarijni = !S.povinneOn;
+  document.getElementById('tog-povinne').disabled = lockPovinne;
+  document.getElementById('tog-havarijni').disabled = lockHavarijni;
+  document.getElementById('sw-povinne').classList.toggle('disabled', lockPovinne);
+  document.getElementById('sw-havarijni').classList.toggle('disabled', lockHavarijni);
+  document.getElementById('row-povinne').classList.toggle('is-disabled', lockPovinne);
+  document.getElementById('row-havarijni').classList.toggle('is-disabled', lockHavarijni);
+}
+
+// ── NÁHRADNÍ VOZIDLO ─────────────────────────────────────
+function syncNahradni() {
+  const show = S.asistenceTier === 's';
+  document.getElementById('nahradni-row').style.display = show ? '' : 'none';
+  document.getElementById('nahradni-divider').style.display = show ? '' : 'none';
+}
+
+// ── UPDATE UI ─────────────────────────────────────────────
+function update() {
+  const annual = calcAnnualTotal();
+  const display = annual / S.periodDivisor;
+  const missingHav = S.havarijniOn && (!S.havarijniTier || havarijniPriceFor(S.havarijniTier) === null);
+
+  document.getElementById('bar-total').textContent = fmtPrice(display);
+  document.getElementById('bar-period-lbl').textContent = S.periodLabel;
+  const noteEl = document.getElementById('bar-note');
+  noteEl.textContent = missingHav ? '+ havarijní' : '';
+  noteEl.style.display = missingHav ? '' : 'none';
+
+  ['zaklad', 'standard', 'komplet', 'vlastni'].forEach(tier => {
+    const el = document.getElementById('cpv-' + tier);
+    if (!el) return;
+    const p = havarijniPriceFor(tier);
+    if (p === null) { el.className = 'cov-price-placeholder'; el.textContent = tier === 'vlastni' ? 'dle výběru' : 'zadejte hodnotu'; }
+    else { el.className = ''; el.textContent = fmtPrice(p); }
+  });
+
+  [['ps-nehoda-hod', CUSTOM_PERIL_RATE.nehoda], ['ps-odcizeni-hod', CUSTOM_PERIL_RATE.odcizeni], ['ps-prirodni-hod', CUSTOM_PERIL_RATE.prirodni], ['ps-zvirata-hod', CUSTOM_PERIL_RATE.zvirata]].forEach(([id, rate]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = S.vehicleValue > 0 ? fmtPrice(Math.round(S.vehicleValue * rate)) : '';
+  });
+  const ctEl = document.getElementById('custom-total');
+  if (ctEl) {
+    const cp = havarijniPriceFor('vlastni');
+    ctEl.textContent = cp !== null ? 'Celkem: ' + fmtPrice(Math.round(cp / S.periodDivisor)) + ' ' + S.periodLabel : '';
+  }
+  const noticeEl = document.getElementById('custom-notice');
+  if (noticeEl) noticeEl.classList.toggle('is-hidden', S.vehicleValue > 0);
+  document.getElementById('tc-havarijni').classList.toggle('no-vehicle', S.vehicleValue <= 0);
+  if (S.barOpen) renderBreakdown();
+  syncToggleConstraints();
+}
+
+function renderBreakdown() {
+  const annual = calcAnnualTotal();
+  let html = '';
+  const row = (label, price, ph) => {
+    if (ph) { html += `<div class="bd-row bd-placeholder"><span>${label}</span><span>nezadáno</span></div>`; return; }
+    const disp = Math.round(price / S.periodDivisor);
+    html += `<div class="bd-row"><span>${label}</span><span>${fmtPrice(disp)}</span></div>`;
+  };
+  if (S.povinneOn) row(`Povinné ručení — ${S.povinneLabel}`, S.povinnePrice);
+  if (S.havarijniOn) {
+    const hp = havarijniPriceFor(S.havarijniTier);
+    if (hp !== null) row(`Havarijní — ${S.havarijniTierLabel}`, hp);
+  }
+  if (S.asistencePrice > 0) row(`Asistence — ${S.asistenceLabel}`, S.asistencePrice);
+  document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => {
+    if (cb.checked) { const p = parseInt(cb.dataset.price) || 0; if (p > 0) row(cb.dataset.name, p); }
+  });
+  const dispTotal = Math.round(annual / S.periodDivisor);
+  html += `<div class="bd-row total-row"><span>Celkem ${fmtPrice(dispTotal)}<span class="total-period">${S.periodLabel}</span></span></div>`;
+  document.getElementById('bar-breakdown').innerHTML = html;
+}
+
+// ── TOGGLES ──────────────────────────────────────────────
+function bindMainToggle(cbId, contentId, stateKey) {
+  document.getElementById(cbId).addEventListener('change', function() {
+    S[stateKey] = this.checked;
+    document.getElementById(contentId).classList.toggle('is-open', this.checked);
+    update();
+  });
+}
+bindMainToggle('tog-povinne',   'tc-povinne',   'povinneOn');
+bindMainToggle('tog-havarijni', 'tc-havarijni', 'havarijniOn');
+
+// ── LIMIT BUTTONS ────────────────────────────────────────
+document.getElementById('limit-group').addEventListener('click', e => {
+  const btn = e.target.closest('[data-limit]');
+  if (!btn) return;
+  document.querySelectorAll('#limit-group .btn-option').forEach(b => b.classList.remove('is-selected'));
+  btn.classList.add('is-selected');
+  S.povinnePrice = parseInt(btn.dataset.price);
+  S.povinneLabel = btn.querySelector('.bn').textContent;
+  update();
+});
+
+// ── COVERAGE TIER ────────────────────────────────────────
+document.getElementById('coverage-group').addEventListener('click', e => {
+  const card = e.target.closest('[data-tier]');
+  if (!card) return;
+  if (card.dataset.tier === 'vlastni' && S.havarijniTier === 'vlastni') {
+    card.classList.remove('is-selected');
+    S.havarijniTier = null;
+    S.havarijniTierLabel = '';
+    document.getElementById('custom-section').classList.remove('is-open');
+    update();
+    return;
+  }
+  document.querySelectorAll('#coverage-group [data-tier]').forEach(c => c.classList.remove('is-selected'));
+  card.classList.add('is-selected');
+  S.havarijniTier = card.dataset.tier;
+  S.havarijniTierLabel = { zaklad: 'Základ', standard: 'Standard', komplet: 'Komplet', vlastni: 'Vlastní' }[card.dataset.tier];
+  document.getElementById('custom-section').classList.toggle('is-open', S.havarijniTier === 'vlastni');
+  update();
+});
+
+// ── CUSTOM PERILS ─────────────────────────────────────────
+document.getElementById('custom-section').addEventListener('click', e => {
+  const btn = e.target.closest('[data-peril][data-level]');
+  if (!btn) return;
+  const peril = btn.dataset.peril;
+  const levelKey = 'custom' + peril.charAt(0).toUpperCase() + peril.slice(1) + '_level';
+  document.querySelectorAll(`#pl-${peril} .btn-option-sm`).forEach(b => b.classList.remove('is-selected'));
+  btn.classList.add('is-selected');
+  S[levelKey] = btn.dataset.level;
+  update();
+});
+
+[['cp-nehoda','customNehoda','pl-nehoda'],['cp-odcizeni','customOdcizeni','pl-odcizeni'],['cp-prirodni','customPrirodni','pl-prirodni'],['cp-zvirata','customZvirata','pl-zvirata']].forEach(([cbId, stateKey, levelsId]) => {
+  document.getElementById(cbId).addEventListener('change', function() {
+    S[stateKey] = this.checked;
+    document.getElementById(levelsId).classList.toggle('is-hidden', !this.checked);
+    update();
+  });
+});
+
+// ── VEHICLE VALUE ────────────────────────────────────────
+document.getElementById('vehicle-input').addEventListener('input', function() {
+  const raw = this.value.replace(/\s/g, '').replace(/\D/g, '');
+  S.vehicleValue = parseInt(raw) || 0;
+  if (raw) {
+    const pos = this.selectionStart, oldLen = this.value.length;
+    this.value = fmtNum(parseInt(raw));
+    const diff = this.value.length - oldLen;
+    this.setSelectionRange(pos + diff, pos + diff);
+  }
+  update();
+});
+
+document.getElementById('cn-anchor').addEventListener('click', () => {
+  const inp = document.getElementById('vehicle-input');
+  inp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => inp.focus(), 320);
+});
+
+document.getElementById('btn-odhad').addEventListener('click', e => {
+  e.preventDefault();
+  openModal('modal-odhad');
+});
+
+// ── ASISTENCE ─────────────────────────────────────────────
+document.getElementById('asistence-group').addEventListener('click', e => {
+  const btn = e.target.closest('[data-asist]');
+  if (!btn) return;
+  document.querySelectorAll('#asistence-group .btn-option').forEach(b => b.classList.remove('is-selected'));
+  btn.classList.add('is-selected');
+  S.asistencePrice = parseInt(btn.dataset.price);
+  S.asistenceLabel = btn.querySelector('.bn').textContent;
+  S.asistenceTier  = btn.dataset.asist;
+  syncNahradni();
+  update();
+});
+
+// ── CHECKBOXES ────────────────────────────────────────────
+document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', update);
+});
+
+// ── EXPAND ADDONS ─────────────────────────────────────────
+document.getElementById('btn-more').addEventListener('click', function() {
+  S.extrasOpen = !S.extrasOpen;
+  document.getElementById('extra-addons').classList.toggle('is-open', S.extrasOpen);
+  this.textContent = S.extrasOpen ? '– Skrýt další pojištění' : '+ Zobrazit další pojištění (4)';
+});
+
+// ── PERIOD SELECTOR ───────────────────────────────────────
+document.querySelector('.bar-period-row').addEventListener('click', e => {
+  const btn = e.target.closest('.period-btn');
+  if (!btn) return;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('is-selected'));
+  btn.classList.add('is-selected');
+  S.periodDivisor = parseInt(btn.dataset.divisor);
+  S.periodLabel = btn.dataset.lbl;
+  update();
+});
+
+// ── BOTTOM BAR ────────────────────────────────────────────
+document.getElementById('bar-toggle').addEventListener('click', () => {
+  S.barOpen = !S.barOpen;
+  document.getElementById('bar-body').classList.toggle('is-open', S.barOpen);
+  document.getElementById('bar-chev').classList.toggle('up', S.barOpen);
+  if (S.barOpen) renderBreakdown();
+});
+
+// ── MODAL HELPERS ─────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('is-open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('is-open'); }
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => closeModal(btn.dataset.close));
+});
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.is-open').forEach(m => closeModal(m.id));
+});
+
+// ── INFO LINKS ────────────────────────────────────────────
+document.querySelectorAll('[data-info]').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const key = btn.dataset.info;
+    const data = INFO[key];
+    if (!data) return;
+    document.getElementById('info-title').textContent = data.title;
+    document.getElementById('info-body').innerHTML = data.html;
+    openModal('modal-info');
+  });
+});
+
+// ── ODHAD MODAL ───────────────────────────────────────────
+document.getElementById('btn-modal-calc').addEventListener('click', () => {
+  const km = parseInt(document.getElementById('modal-km').value.replace(/\D/g, '')) || 80000;
+  const karoserie = document.getElementById('modal-karoserie').value;
+  const is4x4 = document.getElementById('modal-4x4').checked;
+  const isAuto = document.getElementById('modal-auto').checked;
+  const base = { sedan: 420000, suv: 650000, hatchback: 320000, combi: 480000, coupe: 550000, van: 380000, '': 420000 };
+  let val = base[karoserie] || 420000;
+  val = Math.round(val * Math.max(0.30, 1 - km / 400000) / 10000) * 10000;
+  if (is4x4) val += 50000;
+  if (isAuto) val += 30000;
+  S.vehicleValue = val;
+  document.getElementById('vehicle-input').value = fmtNum(val);
+  closeModal('modal-odhad');
+  update();
+});
+
+// ── INIT ──────────────────────────────────────────────────
+const noTrans = document.createElement('style');
+noTrans.textContent = '.toggle-content { transition: none !important; }';
+document.head.appendChild(noTrans);
+document.getElementById('tc-povinne').classList.add('is-open');
+document.getElementById('tc-havarijni').classList.add('is-open');
+requestAnimationFrame(() => requestAnimationFrame(() => noTrans.remove()));
+
+syncNahradni();
+update();
+</script>
+</body>
+</html>
