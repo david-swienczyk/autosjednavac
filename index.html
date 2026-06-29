@@ -88,8 +88,8 @@ body {
 .info-link:hover { opacity: 0.7; }
 
 /* ── TOGGLE CONTENT ── */
-.toggle-content { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.38s ease, opacity 0.28s ease, padding 0.3s ease; }
-.toggle-content.is-open { max-height: 1400px; opacity: 1; padding-top: 20px; }
+.toggle-content { display: none; }
+.toggle-content.is-open { display: block; padding-top: 20px; }
 
 /* ── BUTTON GROUP ── */
 .btn-group { display: flex; gap: 8px; flex-wrap: nowrap; }
@@ -167,8 +167,8 @@ body {
 .btn-vlastni.is-selected .vlastni-chev { transform: rotate(180deg); }
 
 /* ── CUSTOM SECTION ── */
-.custom-section { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease; }
-.custom-section.is-open { max-height: 900px; opacity: 1; padding-top: 16px; }
+.custom-section { display: none; }
+.custom-section.is-open { display: block; padding-top: 16px; }
 
 /* ── CUSTOM NOTICE ── */
 .custom-notice { display: inline-flex; align-items: flex-start; gap: 10px; background: #FFFBEB; border: 1.5px solid #E6C640; border-radius: var(--radius-sm); padding: 10px 14px; margin-top: 16px; margin-bottom: 14px; }
@@ -426,10 +426,10 @@ body {
           <div class="select-wrap">
             <label>Spoluúčast</label>
             <select class="styled-select" id="spoluucast">
-              <option>5 % / min. 5 000</option>
-              <option>10 % / min. 5 000</option>
-              <option>5 % / min. 10 000</option>
-              <option>10 % / min. 10 000</option>
+              <option value="1000" data-mult="1.15">1 000 Kč (+15 %)</option>
+              <option value="3000" data-mult="1.07">3 000 Kč (+7 %)</option>
+              <option value="5000" data-mult="1.00" selected>5 000 Kč (základní)</option>
+              <option value="10000" data-mult="0.90">10 000 Kč (−10 %)</option>
             </select>
           </div>
         </div>
@@ -916,6 +916,7 @@ const S = {
   asistencePrice: 599,
   asistenceLabel: 'M',
   asistenceTier: 'm',
+  spoluucastMult: 1.0,
   periodDivisor: 1,
   periodLabel: '/rok',
   barOpen: false,
@@ -944,10 +945,10 @@ function havarijniPriceFor(tier) {
       if (val) total += val * p.rate;
     }
     if (!hasEnabled) return null;
-    return total > 0 ? Math.round(total / 100) * 100 : null;
+    return total > 0 ? Math.round(total * S.spoluucastMult / 100) * 100 : null;
   }
   if (S.vehicleValue <= 0) return null;
-  return Math.round(S.vehicleValue * HAV_RATE[tier] / 100) * 100;
+  return Math.round(S.vehicleValue * HAV_RATE[tier] * S.spoluucastMult / 100) * 100;
 }
 
 function fmtNum(n) { return n.toLocaleString('cs-CZ'); }
@@ -1005,7 +1006,15 @@ function update() {
 
   [['ps-nehoda-hod', CUSTOM_PERIL_RATE.nehoda], ['ps-odcizeni-hod', CUSTOM_PERIL_RATE.odcizeni], ['ps-prirodni-hod', CUSTOM_PERIL_RATE.prirodni], ['ps-zvirata-hod', CUSTOM_PERIL_RATE.zvirata]].forEach(([id, rate]) => {
     const el = document.getElementById(id);
-    if (el) el.textContent = S.vehicleValue > 0 ? fmtPrice(Math.round(S.vehicleValue * rate)) : '';
+    if (el) el.textContent = S.vehicleValue > 0 ? fmtPrice(Math.round(S.vehicleValue * rate * S.spoluucastMult)) : '';
+  });
+  document.querySelectorAll('.btn-option-sm[data-peril][data-level]').forEach(btn => {
+    const level = btn.dataset.level;
+    if (level === 'hod') return;
+    const rate = CUSTOM_PERIL_RATE[btn.dataset.peril];
+    const val = CUSTOM_LEVEL_VAL[level];
+    const bs = btn.querySelector('.bs');
+    if (bs && rate && val) bs.textContent = fmtPrice(Math.round(val * rate * S.spoluucastMult));
   });
   const ctEl = document.getElementById('custom-total');
   if (ctEl) {
@@ -1104,6 +1113,12 @@ document.getElementById('custom-section').addEventListener('click', e => {
 });
 
 // ── VEHICLE VALUE ────────────────────────────────────────
+document.getElementById('spoluucast').addEventListener('change', function() {
+  const opt = this.options[this.selectedIndex];
+  S.spoluucastMult = parseFloat(opt.dataset.mult) || 1.0;
+  update();
+});
+
 document.getElementById('vehicle-input').addEventListener('input', function() {
   const raw = this.value.replace(/\s/g, '').replace(/\D/g, '');
   S.vehicleValue = parseInt(raw) || 0;
