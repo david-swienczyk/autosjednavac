@@ -93,7 +93,8 @@ body {
 
 /* ── BUTTON GROUP ── */
 .btn-group { display: flex; gap: 8px; flex-wrap: nowrap; }
-.btn-option { flex: 1; min-width: 0; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; font-family: inherit; }
+.btn-option { flex: 1; min-width: 0; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; cursor: pointer; text-align: center; transition: border-color 0.15s, background 0.15s; font-family: inherit; position: relative; }
+.btn-rec-tag { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); background: var(--green); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 9px; border-radius: 20px; white-space: nowrap; pointer-events: none; }
 .btn-option:hover { border-color: #8FADA8; }
 .btn-option.is-selected { border-color: var(--green); background: var(--green-bg); }
 .btn-option .bn { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
@@ -105,15 +106,37 @@ body {
 .field-wrap { flex: 1; }
 .field-wrap label, .select-wrap label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
 .field-wrap label sup { color: #c53030; }
-.vehicle-options { display: flex; align-items: center; gap: 10px; }
-.vehicle-options input { flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; transition: border-color 0.15s; min-width: 0; }
+.vo-tabs { display: flex; max-width: 65%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 8px; }
+.vo-tab { flex: 1; padding: 9px 14px; border: none; background: #fff; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+.vo-tab + .vo-tab { border-left: 1.5px solid var(--border); }
+.vo-tab.is-active { background: var(--green); color: #fff; font-weight: 600; }
+.vo-tab:hover:not(.is-active) { background: var(--green-bg); color: var(--text); }
+.vo-hidden { display: none !important; }
+.vo-field-label { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+.vo-field-label sup { color: #c53030; }
+.vo-input-spacer { display: block; font-size: 12px; margin-bottom: 5px; visibility: hidden; }
+.vo-calc-panel { margin-top: 8px; max-width: 65%; }
+.vo-calc-row { display: flex; gap: 12px; margin-bottom: 12px; }
+.vo-calc-field { flex: 1; }
+.vo-calc-input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; transition: border-color 0.15s; }
+.vo-calc-input:focus { outline: none; border-color: var(--green); }
+.vo-calc-input::placeholder { color: #AFBBB8; }
+.vo-calc-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 34px 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23697472' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border-color 0.15s; }
+.vo-calc-select:focus { outline: none; border-color: var(--green); }
+.vo-calc-checks { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.btn-vo-calc { padding: 10px 20px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+.btn-vo-calc:hover { opacity: 0.88; }
+.vo-result { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--green-bg); border: 1.5px solid var(--green); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; }
+.vo-result-val { font-weight: 700; color: var(--green); font-size: 15px; }
+.btn-use-val { padding: 8px 14px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
+.btn-use-val:hover { opacity: 0.88; }
+.vo-input-wrap { flex: 1; min-width: 0; }
+#vo-panel-zadej { display: flex; align-items: flex-end; gap: 12px; max-width: 65%; }
+.vehicle-options input { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; transition: border-color 0.15s; }
 .vehicle-options input:focus { outline: none; border-color: var(--green); }
-.vehicle-options input::placeholder { color: var(--green); }
+.vehicle-options input::placeholder { color: #AFBBB8; }
 .vehicle-options input:focus::placeholder { opacity: 0.4; }
-.vo-nebo { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
-.btn-odhad { flex-shrink: 0; padding: 10px 16px; border: 1.5px solid var(--green); border-radius: var(--radius-sm); background: #fff; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--green); cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap; }
-.btn-odhad:hover { background: var(--green); color: #fff; }
-.select-wrap { flex: 0 0 190px; }
+.select-wrap { width: 190px; }
 .styled-select { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 34px 10px 12px; font-size: 14px; color: var(--text); background: #fff; font-family: inherit; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23697472' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; transition: border-color 0.15s; }
 .styled-select:focus { outline: none; border-color: var(--green); }
 
@@ -230,6 +253,13 @@ body {
   border: 1.5px solid rgba(255,255,255,.3); background: transparent;
   color: rgba(255,255,255,.65); cursor: pointer; font-family: inherit;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+  position: relative; overflow: visible;
+}
+.badge-sleva {
+  display: inline-block; vertical-align: middle;
+  background: #E6C640; color: #1A2320;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 20px; white-space: nowrap; margin-left: 5px;
 }
 .period-btn:hover { border-color: rgba(255,255,255,.6); color: rgba(255,255,255,.9); }
 .period-btn.is-selected { background: rgba(255,255,255,.18); color: #fff; border-color: rgba(255,255,255,.55); }
@@ -297,11 +327,13 @@ body {
   .btn-group { flex-wrap: wrap; }
   .btn-option { flex: none; min-width: calc(50% - 4px); }
   .coverage-grid { grid-template-columns: 1fr; }
-  .input-row { flex-direction: column; max-width: 100%; }
-  .select-wrap { flex: none; width: 100%; }
-  .vehicle-options { flex-direction: column; align-items: stretch; }
-  .vo-nebo { text-align: center; }
-  .btn-odhad { width: 100%; text-align: center; }
+  .vo-tabs { width: 100%; max-width: 100%; }
+  #vo-panel-zadej { flex-direction: column; max-width: 100%; gap: 8px; }
+  .vo-input-wrap { width: 100%; }
+  .vo-calc-panel { max-width: 100%; }
+  .select-wrap { width: 100%; }
+  .vo-calc-row { flex-direction: column; }
+  .vo-result { flex-direction: column; align-items: flex-start; }
   .checkbox-grid { grid-template-columns: 1fr; }
   .section-header { flex-direction: column; align-items: flex-start; gap: 2px; }
   .sticky-bar { padding: 0 10px 10px; }
@@ -359,7 +391,7 @@ body {
         <div class="btn-group" id="limit-group">
           <button class="btn-option" data-limit="50" data-price="6309"><span class="bn">50 mil.</span><span class="bs">6 309 Kč</span></button>
           <button class="btn-option" data-limit="100" data-price="6586"><span class="bn">100 mil.</span><span class="bs">6 586 Kč</span></button>
-          <button class="btn-option is-selected" data-limit="150" data-price="6717"><span class="bn">150 mil.</span><span class="bs">6 717 Kč</span></button>
+          <button class="btn-option is-selected" data-limit="150" data-price="6717"><span class="btn-rec-tag">Doporučujeme</span><span class="bn">150 mil.</span><span class="bs">6 717 Kč</span></button>
           <button class="btn-option" data-limit="200" data-price="6979"><span class="bn">200 mil.</span><span class="bs">6 979 Kč</span></button>
           <button class="btn-option" data-limit="250" data-price="7117"><span class="bn">250 mil.</span><span class="bs">7 117 Kč</span></button>
         </div>
@@ -380,13 +412,15 @@ body {
         </div>
       </div>
       <div class="toggle-content" id="tc-havarijni">
-        <div class="input-row">
-          <div class="field-wrap">
-            <label>Hodnota vozidla <sup>*</sup></label>
+        <div class="vo-field-label">Hodnota vozidla <sup>*</sup></div>
+        <div class="vo-tabs">
+          <button class="vo-tab is-active" id="vo-tab-zadej">Znám hodnotu</button>
+          <button class="vo-tab" id="vo-tab-vypocti">Spočítat odhad</button>
+        </div>
+        <div id="vo-panel-zadej" style="margin-top:8px">
+          <div class="vo-input-wrap">
             <div class="vehicle-options">
               <input type="text" id="vehicle-input" placeholder="zadejte částku">
-              <span class="vo-nebo">nebo</span>
-              <button class="btn-odhad" id="btn-odhad">spočítat odhad</button>
             </div>
           </div>
           <div class="select-wrap">
@@ -397,6 +431,43 @@ body {
               <option>5 % / min. 10 000</option>
               <option>10 % / min. 10 000</option>
             </select>
+          </div>
+        </div>
+        <div id="vo-panel-vypocti" class="vo-hidden" style="margin-top:8px">
+          <div class="vo-calc-panel" style="margin-top:0">
+            <div class="vo-calc-row">
+              <div class="vo-calc-field">
+                <input type="text" class="vo-calc-input" id="inline-km" placeholder="Počet najetých km">
+              </div>
+              <div class="vo-calc-field">
+                <select class="vo-calc-select" id="inline-karoserie">
+                  <option value="" disabled selected>Typ karoserie</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="suv">SUV / Terénní</option>
+                  <option value="hatchback">Hatchback</option>
+                  <option value="combi">Kombi</option>
+                  <option value="coupe">Coupé / Kabriolet</option>
+                  <option value="van">Van / Minivan</option>
+                </select>
+              </div>
+            </div>
+            <div class="vo-calc-checks">
+              <label class="cb-item">
+                <input type="checkbox" id="inline-4x4">
+                <span class="cb-box"></span>
+                <span class="cb-label">Pohon 4×4</span>
+              </label>
+              <label class="cb-item">
+                <input type="checkbox" id="inline-auto">
+                <span class="cb-box"></span>
+                <span class="cb-label">Automatická převodovka</span>
+              </label>
+            </div>
+            <button class="btn-vo-calc" id="btn-inline-calc">Spočítat hodnotu</button>
+            <div class="vo-result vo-hidden" id="vo-result">
+              <div>Odhadovaná hodnota: <span class="vo-result-val" id="vo-result-val"></span></div>
+              <button class="btn-use-val" id="btn-use-val">Použít tuto hodnotu →</button>
+            </div>
           </div>
         </div>
 
@@ -522,7 +593,7 @@ body {
       <button class="info-link" data-info="asistence" style="margin-bottom: 14px;">Zjistit více o Asistenčních službách</button>
       <div class="btn-group" id="asistence-group">
         <button class="btn-option" data-asist="s" data-price="0"><span class="bn">S</span><span class="bs">0 Kč</span></button>
-        <button class="btn-option is-selected" data-asist="m" data-price="599"><span class="bn">M</span><span class="bs">599 Kč</span></button>
+        <button class="btn-option is-selected" data-asist="m" data-price="599"><span class="btn-rec-tag">Doporučujeme</span><span class="bn">M</span><span class="bs">599 Kč</span></button>
         <button class="btn-option" data-asist="l" data-price="1399"><span class="bn">L</span><span class="bs">1 399 Kč</span></button>
         <button class="btn-option" data-asist="xl" data-price="4999"><span class="bn">XL</span><span class="bs">4 999 Kč</span></button>
       </div>
@@ -610,7 +681,7 @@ body {
 <div class="sticky-bar">
   <div class="bar-inner">
     <div class="bar-period-row">
-      <button class="period-btn is-selected" data-divisor="1" data-lbl="/rok">Ročně</button>
+      <button class="period-btn is-selected" data-divisor="1" data-lbl="/rok">Ročně<span class="badge-sleva">Sleva 6%</span></button>
       <button class="period-btn" data-divisor="2" data-lbl="/6 měs.">Pololetně</button>
       <button class="period-btn" data-divisor="4" data-lbl="/čtvrtletí">Čtvrtletně</button>
     </div>
@@ -1051,9 +1122,14 @@ document.getElementById('cn-anchor').addEventListener('click', () => {
   setTimeout(() => inp.focus(), 320);
 });
 
-document.getElementById('btn-odhad').addEventListener('click', e => {
-  e.preventDefault();
-  openModal('modal-odhad');
+document.getElementById('vo-tab-zadej').addEventListener('click', () => {
+  resetVoTab();
+});
+document.getElementById('vo-tab-vypocti').addEventListener('click', () => {
+  document.getElementById('vo-tab-zadej').classList.remove('is-active');
+  document.getElementById('vo-tab-vypocti').classList.add('is-active');
+  document.getElementById('vo-panel-zadej').classList.add('vo-hidden');
+  document.getElementById('vo-panel-vypocti').classList.remove('vo-hidden');
 });
 
 // ── ASISTENCE ─────────────────────────────────────────────
@@ -1103,6 +1179,13 @@ document.getElementById('bar-toggle').addEventListener('click', () => {
 // ── MODAL HELPERS ─────────────────────────────────────────
 function openModal(id) { document.getElementById(id).classList.add('is-open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('is-open'); }
+function resetVoTab() {
+  document.getElementById('vo-tab-zadej').classList.add('is-active');
+  document.getElementById('vo-tab-vypocti').classList.remove('is-active');
+  document.getElementById('vo-panel-zadej').classList.remove('vo-hidden');
+  document.getElementById('vo-panel-vypocti').classList.add('vo-hidden');
+  document.getElementById('vo-result').classList.add('vo-hidden');
+}
 
 document.querySelectorAll('[data-close]').forEach(btn => {
   btn.addEventListener('click', () => closeModal(btn.dataset.close));
@@ -1128,19 +1211,28 @@ document.querySelectorAll('[data-info]').forEach(btn => {
 });
 
 // ── ODHAD MODAL ───────────────────────────────────────────
-document.getElementById('btn-modal-calc').addEventListener('click', () => {
-  const km = parseInt(document.getElementById('modal-km').value.replace(/\D/g, '')) || 80000;
-  const karoserie = document.getElementById('modal-karoserie').value;
-  const is4x4 = document.getElementById('modal-4x4').checked;
-  const isAuto = document.getElementById('modal-auto').checked;
+let voCalcResult = 0;
+
+document.getElementById('btn-inline-calc').addEventListener('click', () => {
+  const km = parseInt(document.getElementById('inline-km').value.replace(/\D/g, '')) || 80000;
+  const karoserie = document.getElementById('inline-karoserie').value;
+  const is4x4 = document.getElementById('inline-4x4').checked;
+  const isAuto = document.getElementById('inline-auto').checked;
   const base = { sedan: 420000, suv: 650000, hatchback: 320000, combi: 480000, coupe: 550000, van: 380000, '': 420000 };
   let val = base[karoserie] || 420000;
   val = Math.round(val * Math.max(0.30, 1 - km / 400000) / 10000) * 10000;
   if (is4x4) val += 50000;
   if (isAuto) val += 30000;
-  S.vehicleValue = val;
-  document.getElementById('vehicle-input').value = fmtNum(val);
-  closeModal('modal-odhad');
+  voCalcResult = val;
+  document.getElementById('vo-result-val').textContent = fmtPrice(val);
+  document.getElementById('vo-result').classList.remove('vo-hidden');
+});
+
+document.getElementById('btn-use-val').addEventListener('click', () => {
+  if (!voCalcResult) return;
+  S.vehicleValue = voCalcResult;
+  document.getElementById('vehicle-input').value = fmtNum(voCalcResult);
+  resetVoTab();
   update();
 });
 
