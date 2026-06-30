@@ -156,8 +156,8 @@ body {
 .cov-features { list-style: none; }
 .cov-features li { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; padding: 2.5px 0; color: var(--text); }
 .fi { flex-shrink: 0; width: 14px; font-style: normal; }
-.fi-ok { color: var(--green); font-weight: 600; }
-.fi-no { color: #B2BFBC; }
+.fi-ok { color: #16A34A; font-weight: 700; font-size: 15px; }
+.fi-no { color: #C53030; font-weight: 700; font-size: 15px; }
 
 /* ── SESTAVÍM SI SÁM BUTTON ── */
 .btn-vlastni { display: flex; align-items: center; gap: 7px; width: 100%; margin-top: 10px; padding: 10px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: #fff; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s, color 0.15s; }
@@ -321,6 +321,85 @@ body {
 .btn-info-ok { display: block; margin: 24px auto 0; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 12px 36px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
 .btn-info-ok:hover { opacity: 0.88; }
 
+/* ── FREKVENCE PLATBY ── */
+.freq-tabs-wrap {
+  display: flex;
+  background: var(--green-bg);
+  border-radius: 40px;
+  padding: 4px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.freq-tab {
+  padding: 10px 26px;
+  border: none;
+  border-radius: 36px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--green);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.freq-tab.is-active { background: var(--green); color: #fff; }
+.freq-tab:hover:not(.is-active) { background: rgba(0,0,0,.05); }
+.freq-price-main { font-size: 38px; font-weight: 800; color: var(--text); line-height: 1.1; }
+.freq-price-bottom { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.freq-price-sub { font-size: 14px; color: var(--text-muted); }
+.freq-price-schedule { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 6px; }
+.freq-savings {
+  display: none;
+  background: var(--green-bg);
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.freq-savings.is-visible { display: inline-block; }
+.freq-sum-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+.freq-per-year { font-size: 18px; font-weight: 400; color: var(--text-muted); }
+.freq-price-big { font-size: 34px; font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+.freq-price-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.freq-extra-discounts { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+
+/* ── FREQ VARIANTA B: radio karty ── */
+.freq-radio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.freq-radio-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  background: #fff;
+}
+.freq-radio-card.is-selected { border-color: var(--green); }
+.freq-radio-card:hover:not(.is-selected) { border-color: #8FADA8; }
+.frc-inner { display: flex; align-items: flex-start; gap: 10px; }
+.frc-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--border); flex-shrink: 0; margin-top: 2px;
+  position: relative; transition: border-color 0.15s, background 0.15s;
+}
+.freq-radio-card.is-selected .frc-radio { border-color: var(--green); background: var(--green); }
+.freq-radio-card.is-selected .frc-radio::after {
+  content: ''; position: absolute;
+  width: 6px; height: 6px; background: #fff; border-radius: 50%;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.frc-left { flex: 1; min-width: 0; }
+.frc-name { font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.frc-badge-sleva { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; background: var(--green-bg); color: var(--green); padding: 2px 7px; border-radius: 20px; }
+.frc-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+.frc-right { text-align: right; flex-shrink: 0; }
+.frc-amount { font-size: 15px; font-weight: 700; color: var(--text); }
+.frc-monthly { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.frc-savings-inline { font-size: 13px; font-weight: 700; color: var(--green); margin-top: 3px; display: none; }
+.freq-radio-card.is-selected .frc-savings-inline { display: block; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 680px) {
   .container { padding: 20px 14px; }
@@ -350,6 +429,10 @@ body {
   .custom-peril-grid .peril-row:nth-child(1), .custom-peril-grid .peril-row:nth-child(2) { border-bottom: none; }
   .footer-nav { padding: 10px 14px 14px; }
   .btn-pokracovat-nav { flex: 1; text-align: center; }
+  .freq-tabs-wrap { width: 100%; }
+  .freq-tab { flex: 1; padding: 9px 10px; }
+  .freq-price-main { font-size: 30px; }
+  .freq-radio-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -675,16 +758,80 @@ body {
     </div>
   </div>
 
+  <!-- ══ Frekvence platby ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">Frekvence platby</span>
+    </div>
+
+    <!-- Varianta A: taby -->
+    <div class="card">
+      <div class="freq-tabs-wrap">
+        <button class="freq-tab is-active" data-freq="rocne">Ročně</button>
+        <button class="freq-tab" data-freq="pololetne">Pololetně</button>
+        <button class="freq-tab" data-freq="ctvrtletne">Čtvrtletně</button>
+      </div>
+      <div class="freq-sum-sub">12 měsíců ochrany, každý za <span id="freq-monthly">—</span></div>
+      <div class="freq-price-row">
+        <div class="freq-price-big"><span id="freq-annual">—</span><span class="freq-per-year"> /rok</span></div>
+        <span class="freq-savings" id="freq-savings"></span>
+      </div>
+      <div class="freq-price-schedule" id="freq-schedule"></div>
+      <div class="freq-extra-discounts">(Cena včetně slevy 15 % a 25 % a bonusu 12 %)</div>
+    </div>
+
+    <!-- Varianta B: radio karty -->
+    <div class="card" style="margin-top:10px;display:none">
+      <div class="freq-radio-grid">
+        <div class="freq-radio-card is-selected" id="frc-rocne" data-freq2="rocne">
+          <div class="frc-inner">
+            <span class="frc-radio"></span>
+            <div class="frc-left">
+              <div class="frc-name">Ročně <span class="frc-badge-sleva">SLEVA 6 %</span></div>
+              <div class="frc-sub">platba 1× ročně</div>
+            </div>
+            <div class="frc-right">
+              <div class="frc-amount" id="fr2-rocne-amount">—</div>
+              <div class="frc-monthly" id="fr2-rocne-monthly">—</div>
+              <div class="frc-savings-inline" id="fr2-rocne-savings">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="freq-radio-card" id="frc-pololetne" data-freq2="pololetne">
+          <div class="frc-inner">
+            <span class="frc-radio"></span>
+            <div class="frc-left">
+              <div class="frc-name">Pololetně</div>
+              <div class="frc-sub" id="fr2-pololetne-sub">—</div>
+            </div>
+            <div class="frc-right">
+              <div class="frc-amount" id="fr2-pololetne-amount">—</div>
+              <div class="frc-monthly" id="fr2-pololetne-monthly">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="freq-radio-card" id="frc-ctvrtletne" data-freq2="ctvrtletne">
+          <div class="frc-inner">
+            <span class="frc-radio"></span>
+            <div class="frc-left">
+              <div class="frc-name">Čtvrtletně</div>
+              <div class="frc-sub" id="fr2-ctvrtletne-sub">—</div>
+            </div>
+            <div class="frc-right">
+              <div class="frc-amount" id="fr2-ctvrtletne-amount">—</div>
+              <div class="frc-monthly" id="fr2-ctvrtletne-monthly">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══ STICKY BAR ══ -->
 <div class="sticky-bar">
   <div class="bar-inner">
-    <div class="bar-period-row">
-      <button class="period-btn is-selected" data-divisor="1" data-lbl="/rok">Ročně<span class="badge-sleva">Sleva 6%</span></button>
-      <button class="period-btn" data-divisor="2" data-lbl="/6 měs.">Pololetně</button>
-      <button class="period-btn" data-divisor="4" data-lbl="/čtvrtletí">Čtvrtletně</button>
-    </div>
     <div class="bar-top" id="bar-toggle">
       <div class="bar-summary">
         <span class="bar-label">Celkem</span>
@@ -917,13 +1064,17 @@ const S = {
   asistenceLabel: 'M',
   asistenceTier: 'm',
   spoluucastMult: 1.0,
-  periodDivisor: 1,
-  periodLabel: '/rok',
+  freqKey: 'rocne',
   barOpen: false,
   extrasOpen: false,
 };
 
 const HAV_RATE = { zaklad: 0.009, standard: 0.013, komplet: 0.017 };
+const FREQ = {
+  rocne:      { mult: 1.00,   payments: 1, barLbl: '/rok' },
+  pololetne:  { mult: 1/0.94, payments: 2, barLbl: '/6 měs.' },
+  ctvrtletne: { mult: 1/0.94, payments: 4, barLbl: '/čtvrtletí' },
+};
 const CUSTOM_PERIL_RATE = { nehoda: 0.040, odcizeni: 0.025, prirodni: 0.012, zvirata: 0.010 };
 const CUSTOM_LEVEL_VAL = { '20k': 20000, '50k': 50000, '70k': 70000, '100k': 100000 };
 
@@ -986,15 +1137,55 @@ function syncNahradni() {
 
 // ── UPDATE UI ─────────────────────────────────────────────
 function update() {
-  const annual = calcAnnualTotal();
-  const display = annual / S.periodDivisor;
+  const baseAnnual = calcAnnualTotal();
+  const freq = FREQ[S.freqKey];
+  const adjustedAnnual = Math.round(baseAnnual * freq.mult / 100) * 100;
+  const perPayment = Math.round(adjustedAnnual / freq.payments / 100) * 100;
+  const monthlyEquiv = Math.round(adjustedAnnual / 12);
   const missingHav = S.havarijniOn && (!S.havarijniTier || havarijniPriceFor(S.havarijniTier) === null);
 
-  document.getElementById('bar-total').textContent = fmtPrice(display);
-  document.getElementById('bar-period-lbl').textContent = S.periodLabel;
+  document.getElementById('bar-total').textContent = fmtPrice(perPayment);
+  document.getElementById('bar-period-lbl').textContent = freq.barLbl;
   const noteEl = document.getElementById('bar-note');
   noteEl.textContent = missingHav ? '+ havarijní' : '';
   noteEl.style.display = missingHav ? '' : 'none';
+
+  const savings = Math.round(baseAnnual * (1/0.94 - 1));
+
+  const freqMonthlyEl = document.getElementById('freq-monthly');
+  if (freqMonthlyEl) {
+    freqMonthlyEl.textContent = fmtNum(monthlyEquiv) + ' Kč';
+    document.getElementById('freq-annual').textContent = fmtNum(adjustedAnnual) + ' Kč';
+    const schedEl = document.getElementById('freq-schedule');
+    const savEl = document.getElementById('freq-savings');
+    if (S.freqKey === 'rocne') {
+      schedEl.textContent = '';
+      savEl.textContent = savings > 0 ? 'Sleva 6 % — ušetříte ' + fmtNum(savings) + ' Kč' : '';
+      savEl.classList.toggle('is-visible', savings > 0);
+    } else {
+      schedEl.textContent = freq.payments + '× ' + fmtNum(perPayment) + ' Kč';
+      savEl.classList.remove('is-visible');
+    }
+  }
+
+  const fr2El = document.getElementById('frc-rocne');
+  if (fr2El) {
+    const fullAnnual = Math.round(baseAnnual / 0.94);
+    const poloPer = Math.round(fullAnnual / 2);
+    const ctvrtPer = Math.round(fullAnnual / 4);
+    document.getElementById('fr2-rocne-amount').textContent = fmtNum(baseAnnual) + ' Kč';
+    document.getElementById('fr2-rocne-monthly').textContent = fmtNum(Math.round(baseAnnual / 12)) + ' Kč/měs';
+    document.getElementById('fr2-rocne-savings').textContent = savings > 0 ? 'Sleva 6 % — ušetříte ' + fmtNum(savings) + ' Kč' : '';
+    document.getElementById('fr2-pololetne-amount').textContent = '2× ' + fmtNum(poloPer) + ' Kč';
+    document.getElementById('fr2-pololetne-monthly').textContent = fmtNum(Math.round(fullAnnual / 12)) + ' Kč/měs';
+    document.getElementById('fr2-pololetne-sub').textContent = 'celkem ' + fmtNum(fullAnnual) + ' Kč/rok';
+    document.getElementById('fr2-ctvrtletne-amount').textContent = '4× ' + fmtNum(ctvrtPer) + ' Kč';
+    document.getElementById('fr2-ctvrtletne-monthly').textContent = fmtNum(Math.round(fullAnnual / 12)) + ' Kč/měs';
+    document.getElementById('fr2-ctvrtletne-sub').textContent = 'celkem ' + fmtNum(fullAnnual) + ' Kč/rok';
+    ['rocne', 'pololetne', 'ctvrtletne'].forEach(k => {
+      document.getElementById('frc-' + k).classList.toggle('is-selected', S.freqKey === k);
+    });
+  }
 
   ['zaklad', 'standard', 'komplet', 'vlastni'].forEach(tier => {
     const el = document.getElementById('cpv-' + tier);
@@ -1019,7 +1210,12 @@ function update() {
   const ctEl = document.getElementById('custom-total');
   if (ctEl) {
     const cp = havarijniPriceFor('vlastni');
-    ctEl.textContent = cp !== null ? 'Celkem: ' + fmtPrice(Math.round(cp / S.periodDivisor)) + ' ' + S.periodLabel : '';
+    if (cp !== null) {
+      const cpAdj = Math.round(cp * freq.mult / freq.payments / 100) * 100;
+      ctEl.textContent = 'Celkem: ' + fmtPrice(cpAdj) + ' ' + freq.barLbl;
+    } else {
+      ctEl.textContent = '';
+    }
   }
   const noticeEl = document.getElementById('custom-notice');
   if (noticeEl) noticeEl.classList.toggle('is-hidden', S.vehicleValue > 0);
@@ -1029,11 +1225,11 @@ function update() {
 }
 
 function renderBreakdown() {
-  const annual = calcAnnualTotal();
+  const baseAnnual = calcAnnualTotal();
+  const freq = FREQ[S.freqKey];
   let html = '';
-  const row = (label, price, ph) => {
-    if (ph) { html += `<div class="bd-row bd-placeholder"><span>${label}</span><span>nezadáno</span></div>`; return; }
-    const disp = Math.round(price / S.periodDivisor);
+  const row = (label, basePrice) => {
+    const disp = Math.round(basePrice * freq.mult / freq.payments / 100) * 100;
     html += `<div class="bd-row"><span>${label}</span><span>${fmtPrice(disp)}</span></div>`;
   };
   if (S.povinneOn) row(`Povinné ručení — ${S.povinneLabel}`, S.povinnePrice);
@@ -1045,8 +1241,8 @@ function renderBreakdown() {
   document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => {
     if (cb.checked) { const p = parseInt(cb.dataset.price) || 0; if (p > 0) row(cb.dataset.name, p); }
   });
-  const dispTotal = Math.round(annual / S.periodDivisor);
-  html += `<div class="bd-row total-row"><span>Celkem ${fmtPrice(dispTotal)}<span class="total-period">${S.periodLabel}</span></span></div>`;
+  const perPayment = Math.round(baseAnnual * freq.mult / freq.payments / 100) * 100;
+  html += `<div class="bd-row total-row"><span>Celkem ${fmtPrice(perPayment)}<span class="total-period">${freq.barLbl}</span></span></div>`;
   document.getElementById('bar-breakdown').innerHTML = html;
 }
 
@@ -1172,15 +1368,18 @@ document.getElementById('btn-more').addEventListener('click', function() {
   this.textContent = S.extrasOpen ? '– Skrýt další pojištění' : '+ Zobrazit další pojištění (4)';
 });
 
-// ── PERIOD SELECTOR ───────────────────────────────────────
-document.querySelector('.bar-period-row').addEventListener('click', e => {
-  const btn = e.target.closest('.period-btn');
-  if (!btn) return;
-  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('is-selected'));
-  btn.classList.add('is-selected');
-  S.periodDivisor = parseInt(btn.dataset.divisor);
-  S.periodLabel = btn.dataset.lbl;
+// ── FREKVENCE PLATBY ─────────────────────────────────────
+function setFreq(key) {
+  S.freqKey = key;
+  document.querySelectorAll('.freq-tab').forEach(b => b.classList.toggle('is-active', b.dataset.freq === key));
   update();
+}
+document.querySelector('.freq-tabs-wrap').addEventListener('click', e => {
+  const btn = e.target.closest('[data-freq]');
+  if (btn) setFreq(btn.dataset.freq);
+});
+document.querySelectorAll('.freq-radio-card').forEach(card => {
+  card.addEventListener('click', () => setFreq(card.dataset.freq2));
 });
 
 // ── BOTTOM BAR ────────────────────────────────────────────
