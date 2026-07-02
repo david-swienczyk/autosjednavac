@@ -99,7 +99,9 @@ body {
 .btn-option.is-selected { border-color: var(--green); background: var(--green-bg); }
 .btn-option .bn { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
 .btn-option .bs { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.btn-option .bd { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 .btn-option.is-selected .bn, .btn-option.is-selected .bs { color: var(--green); }
+.btn-option.is-selected .bd { color: var(--green); opacity: 0.75; }
 
 /* ── VEHICLE INPUT ── */
 .input-row { display: flex; gap: 12px; align-items: flex-start; max-width: 65%; }
@@ -143,16 +145,17 @@ body {
 /* ── COVERAGE ── */
 .coverage-section-label { font-size: 13px; font-weight: 600; color: var(--text); margin: 20px 0 10px; }
 .coverage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.cov-card { border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 14px 15px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.cov-card { position: relative; border: 1.5px solid var(--border); border-radius: var(--radius-md); padding: 18px 15px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.cov-rec-tag { position: absolute; top: -4px; right: 10px; transform: translateY(-50%); background: var(--green); color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 9px; border-radius: 20px; white-space: nowrap; pointer-events: none; }
 .cov-card:hover { border-color: #8FADA8; }
 .cov-card.is-selected { border-color: var(--green); background: var(--green-bg); }
 .cov-header { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
 .cov-name { font-size: 14px; font-weight: 600; }
 .badge-rec { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; background: var(--green); color: #fff; padding: 2px 7px; border-radius: 20px; }
-.cov-price { font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 3px; }
+.cov-price { font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 14px; }
 .cov-price .per-yr { font-size: 13px; font-weight: 400; color: var(--text-muted); }
 .cov-price-placeholder { font-size: 13px; color: var(--text-muted); font-style: italic; }
-.cov-range { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+.cov-range-chip { display: inline-block; font-size: 12px; font-weight: 700; color: var(--green); background: var(--green-bg); border-radius: 20px; padding: 3px 10px; }
 .cov-features { list-style: none; }
 .cov-features li { display: flex; align-items: flex-start; gap: 6px; font-size: 13px; padding: 2.5px 0; color: var(--text); }
 .fi { flex-shrink: 0; width: 14px; font-style: normal; }
@@ -205,18 +208,27 @@ body {
 .toggle-label-sm { font-size: 14px; font-weight: 500; color: var(--text); }
 
 /* ── CHECKBOXES ── */
-.checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 28px; }
 .cb-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none; }
 .cb-item input[type="checkbox"] { display: none; }
 .cb-box { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border); background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: background 0.15s, border-color 0.15s; }
 .cb-item input:checked + .cb-box { background: var(--green); border-color: var(--green); }
 .cb-item input:checked + .cb-box::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid #fff; border-top: none; border-left: none; transform: rotate(42deg) translate(0, -1px); }
-.cb-wrap { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-.cb-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .cb-label { font-size: 14px; color: var(--text); }
-.cb-price { font-size: 13px; color: var(--green); font-weight: 500; white-space: nowrap; flex-shrink: 0; }
 .cb-help { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
 .cb-info-link { font-size: 12px; margin-top: 0; }
+
+/* ── ADDON PILLS ── */
+.addon-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 14px; }
+.addon-block .cb-info-link { margin: 5px 0 0 18px; }
+.cb-item.addon-item { display: flex; align-items: center; gap: 14px; border: 1.5px solid var(--border); border-radius: 40px; padding: 9px 18px; transition: border-color 0.15s, background 0.15s; }
+.cb-item.addon-item:hover { border-color: #8FADA8; }
+.cb-item.addon-item.is-selected { border-color: var(--green); background: var(--green-bg); }
+.addon-name { flex: 1; font-size: 15px; font-weight: 600; color: var(--text); }
+.cb-item.addon-item.is-selected .addon-name { color: var(--green); }
+.addon-price { text-align: right; flex-shrink: 0; }
+.addon-price-val { display: block; font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; }
+.cb-item.addon-item.is-selected .addon-price-val { color: var(--green); }
+.addon-price-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
 /* ── HIDDEN ADDONS ── */
 .hidden-addons { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s ease, opacity 0.25s ease; }
@@ -413,7 +425,9 @@ body {
   .select-wrap { width: 100%; }
   .vo-calc-row { flex-direction: column; }
   .vo-result { flex-direction: column; align-items: flex-start; }
-  .checkbox-grid { grid-template-columns: 1fr; }
+  .addon-list { grid-template-columns: 1fr; }
+  .cb-item.addon-item { padding: 9px 16px; gap: 12px; border-radius: 30px; }
+  .addon-name { font-size: 14px; }
   .section-header { flex-direction: column; align-items: flex-start; gap: 2px; }
   .sticky-bar { padding: 0 10px 10px; }
   .bar-period-row { padding: 10px 14px 0; }
@@ -509,10 +523,10 @@ body {
           <div class="select-wrap">
             <label>Spoluúčast</label>
             <select class="styled-select" id="spoluucast">
-              <option value="1000" data-mult="1.15">1 000 Kč (+15 %)</option>
-              <option value="3000" data-mult="1.07">3 000 Kč (+7 %)</option>
-              <option value="5000" data-mult="1.00" selected>5 000 Kč (základní)</option>
-              <option value="10000" data-mult="0.90">10 000 Kč (−10 %)</option>
+              <option value="1000" data-mult="1.15">1 000 Kč</option>
+              <option value="3000" data-mult="1.07">3 000 Kč</option>
+              <option value="5000" data-mult="1.00" selected>5 000 Kč</option>
+              <option value="10000" data-mult="0.90">10 000 Kč</option>
             </select>
           </div>
         </div>
@@ -563,9 +577,8 @@ body {
         <div id="coverage-group">
           <div class="coverage-grid">
             <div class="cov-card" data-tier="zaklad">
-              <div class="cov-header"><span class="cov-name">Základ</span></div>
+              <div class="cov-header"><span class="cov-name">Základ</span><span class="cov-range-chip">do 100 000 Kč</span></div>
               <div class="cov-price"><span id="cpv-zaklad" class="cov-price-placeholder">zadejte hodnotu</span><span class="per-yr"> /rok</span></div>
-              <div class="cov-range">Plnění do 100 000 Kč</div>
               <ul class="cov-features">
                 <li><i class="fi fi-ok">✓</i> Střet a poškození zvířaty</li>
                 <li><i class="fi fi-ok">✓</i> Odcizení a vandalismus</li>
@@ -574,9 +587,9 @@ body {
               </ul>
             </div>
             <div class="cov-card" data-tier="standard">
-              <div class="cov-header"><span class="cov-name">Standard</span><span class="badge-rec">Doporučeno</span></div>
+              <span class="cov-rec-tag">Doporučeno</span>
+              <div class="cov-header"><span class="cov-name">Standard</span><span class="cov-range-chip">na hodnotu vozidla</span></div>
               <div class="cov-price"><span id="cpv-standard" class="cov-price-placeholder">zadejte hodnotu</span><span class="per-yr"> /rok</span></div>
-              <div class="cov-range">Plnění do hodnoty vozidla</div>
               <ul class="cov-features">
                 <li><i class="fi fi-ok">✓</i> Střet a poškození zvířaty</li>
                 <li><i class="fi fi-ok">✓</i> Odcizení a vandalismus</li>
@@ -585,9 +598,8 @@ body {
               </ul>
             </div>
             <div class="cov-card" data-tier="komplet">
-              <div class="cov-header"><span class="cov-name">Komplet</span></div>
+              <div class="cov-header"><span class="cov-name">Komplet</span><span class="cov-range-chip">na hodnotu vozidla</span></div>
               <div class="cov-price"><span id="cpv-komplet" class="cov-price-placeholder">zadejte hodnotu</span><span class="per-yr"> /rok</span></div>
-              <div class="cov-range">Plnění do hodnoty vozidla</div>
               <ul class="cov-features">
                 <li><i class="fi fi-ok">✓</i> Střet a poškození zvířaty</li>
                 <li><i class="fi fi-ok">✓</i> Odcizení a vandalismus</li>
@@ -675,10 +687,10 @@ body {
       <div class="sub-desc">Když auto nepojede. Vyberte úroveň.</div>
       <button class="info-link" data-info="asistence" style="margin-bottom: 14px;">Zjistit více o Asistenčních službách</button>
       <div class="btn-group" id="asistence-group">
-        <button class="btn-option" data-asist="s" data-price="0"><span class="bn">S</span><span class="bs">0 Kč</span></button>
-        <button class="btn-option is-selected" data-asist="m" data-price="599"><span class="btn-rec-tag">Doporučujeme</span><span class="bn">M</span><span class="bs">599 Kč</span></button>
-        <button class="btn-option" data-asist="l" data-price="1399"><span class="bn">L</span><span class="bs">1 399 Kč</span></button>
-        <button class="btn-option" data-asist="xl" data-price="4999"><span class="bn">XL</span><span class="bs">4 999 Kč</span></button>
+        <button class="btn-option" data-asist="s" data-price="0"><span class="bn">S</span><span class="bs">0 Kč</span><span class="bd">odtah do 3 000 Kč</span></button>
+        <button class="btn-option is-selected" data-asist="m" data-price="599"><span class="btn-rec-tag">Doporučujeme</span><span class="bn">M</span><span class="bs">599 Kč</span><span class="bd">odtah do 5 000 Kč</span></button>
+        <button class="btn-option" data-asist="l" data-price="1399"><span class="bn">L</span><span class="bs">1 399 Kč</span><span class="bd">odtah do 10 000 Kč</span></button>
+        <button class="btn-option" data-asist="xl" data-price="4999"><span class="bn">XL</span><span class="bs">4 999 Kč</span><span class="bd">odtah neomezeně</span></button>
       </div>
       <hr class="divider" id="nahradni-divider" style="display:none">
       <div class="toggle-row-sm" id="nahradni-row" style="display:none">
@@ -696,65 +708,95 @@ body {
         <span class="dopln-title">Doplňková pojištění</span>
         <span class="dopln-sub">přidejte, co dává smysl</span>
       </div>
-      <div class="checkbox-grid">
-        <label class="cb-item">
-          <input type="checkbox" id="a-skla" data-price="279" data-name="Pojištění skel" checked>
-          <span class="cb-box"></span>
-          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Pojištění skel</span><span class="cb-price">+ 279 Kč/rok</span></span><button class="info-link cb-info-link" data-info="skla">Co myslíme pojištěním skel</button></span>
-        </label>
-        <label class="cb-item">
-          <input type="checkbox" id="a-nezavinena" data-price="229" data-name="Nezaviněná bouračka" checked>
-          <span class="cb-box"></span>
-          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Nezaviněná bouračka</span><span class="cb-price">+ 229 Kč/rok</span></span><button class="info-link cb-info-link" data-info="nezavinena">Co myslíme nezaviněnou bouračkou</button></span>
-        </label>
-        <label class="cb-item">
-          <input type="checkbox" id="a-sedacky" data-price="149" data-name="Dětské sedačky a zavazadla">
-          <span class="cb-box"></span>
-          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Dětské sedačky a zavazadla</span><span class="cb-price">+ 149 Kč/rok</span></span><button class="info-link cb-info-link" data-info="sedacky">Co myslíme dětskými sedačkami a zavazadly</button></span>
-        </label>
-        <label class="cb-item">
-          <input type="checkbox" id="a-garance" data-price="189" data-name="Garance ceny na 3 roky" checked>
-          <span class="cb-box"></span>
-          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Garance ceny na 3 roky</span><span class="cb-price">+ 189 Kč/rok</span></span><button class="info-link cb-info-link" data-info="garance">Co myslíme garancí ceny na 3 roky</button></span>
-        </label>
-        <label class="cb-item">
-          <input type="checkbox" id="a-urazove" data-price="319" data-name="Úrazové poj. řidiče a cestujících">
-          <span class="cb-box"></span>
-          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Úrazové poj. řidiče a cestujících</span><span class="cb-price">+ 319 Kč/rok</span></span><button class="info-link cb-info-link" data-info="urazove">Co myslíme úrazovým pojištěním řidiče a cestujících</button></span>
-        </label>
-        <label class="cb-item">
-          <input type="checkbox" id="a-smrt" data-price="99" data-name="Smrt obou rodičů ve vozidle">
-          <span class="cb-box"></span>
-          <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Smrt obou rodičů ve vozidle</span><span class="cb-price">+ 99 Kč/rok</span></span><button class="info-link cb-info-link" data-info="smrt">Co myslíme smrtí obou rodičů ve vozidle</button></span>
-        </label>
-      </div>
-
-      <div class="hidden-addons" id="extra-addons">
-        <div class="checkbox-grid">
-          <label class="cb-item">
-            <input type="checkbox" id="a-pravni" data-price="199" data-name="Právní ochrana">
-            <span class="cb-box"></span>
-            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Právní ochrana</span><span class="cb-price">+ 199 Kč/rok</span></span><button class="info-link cb-info-link" data-info="pravni">Co myslíme právní ochranou</button></span>
+      <div class="addon-list">
+        <div class="addon-block">
+          <label class="cb-item addon-item">
+            <span class="toggle-switch"><input type="checkbox" id="a-skla" data-price="279" data-name="Pojištění skel" checked><span class="toggle-track"></span></span>
+            <span class="addon-name">Pojištění skel</span>
+            <span class="addon-price"><span class="addon-price-val">+ 279 Kč</span><span class="addon-price-sub">za rok</span></span>
           </label>
-          <label class="cb-item">
-            <input type="checkbox" id="a-pneumatiky" data-price="249" data-name="Pneumatiky a disky">
-            <span class="cb-box"></span>
-            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Pneumatiky a disky</span><span class="cb-price">+ 249 Kč/rok</span></span><button class="info-link cb-info-link" data-info="pneumatiky">Co myslíme pneumatikami a disky</button></span>
+          <button class="info-link cb-info-link" data-info="skla">Co myslíme pojištěním skel</button>
+        </div>
+        <div class="addon-block">
+          <label class="cb-item addon-item">
+            <span class="toggle-switch"><input type="checkbox" id="a-nezavinena" data-price="229" data-name="Nezaviněná bouračka" checked><span class="toggle-track"></span></span>
+            <span class="addon-name">Nezaviněná bouračka</span>
+            <span class="addon-price"><span class="addon-price-val">+ 229 Kč</span><span class="addon-price-sub">za rok</span></span>
           </label>
-          <label class="cb-item">
-            <input type="checkbox" id="a-gap" data-price="349" data-name="GAP pojištění">
-            <span class="cb-box"></span>
-            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">GAP pojištění</span><span class="cb-price">+ 349 Kč/rok</span></span><button class="info-link cb-info-link" data-info="gap">Co myslíme GAP pojištěním</button></span>
+          <button class="info-link cb-info-link" data-info="nezavinena">Co myslíme nezaviněnou bouračkou</button>
+        </div>
+        <div class="addon-block">
+          <label class="cb-item addon-item">
+            <span class="toggle-switch"><input type="checkbox" id="a-sedacky" data-price="149" data-name="Dětské sedačky a zavazadla"><span class="toggle-track"></span></span>
+            <span class="addon-name">Dětské sedačky a zavazadla</span>
+            <span class="addon-price"><span class="addon-price-val">+ 149 Kč</span><span class="addon-price-sub">za rok</span></span>
           </label>
-          <label class="cb-item">
-            <input type="checkbox" id="a-zavazadla" data-price="129" data-name="Zavazadla">
-            <span class="cb-box"></span>
-            <span class="cb-wrap"><span class="cb-top"><span class="cb-label">Zavazadla</span><span class="cb-price">+ 129 Kč/rok</span></span><button class="info-link cb-info-link" data-info="zavazadla">Co myslíme zavazadly</button></span>
+          <button class="info-link cb-info-link" data-info="sedacky">Co myslíme dětskými sedačkami a zavazadly</button>
+        </div>
+        <div class="addon-block">
+          <label class="cb-item addon-item">
+            <span class="toggle-switch"><input type="checkbox" id="a-garance" data-price="189" data-name="Garance ceny na 3 roky" checked><span class="toggle-track"></span></span>
+            <span class="addon-name">Garance ceny na 3 roky</span>
+            <span class="addon-price"><span class="addon-price-val">+ 189 Kč</span><span class="addon-price-sub">za rok</span></span>
           </label>
+          <button class="info-link cb-info-link" data-info="garance">Co myslíme garancí ceny na 3 roky</button>
         </div>
       </div>
 
-      <button class="expand-btn" id="btn-more">+ Zobrazit další pojištění (4)</button>
+      <div class="hidden-addons" id="extra-addons">
+        <div class="addon-list">
+          <div class="addon-block">
+            <label class="cb-item addon-item">
+              <span class="toggle-switch"><input type="checkbox" id="a-urazove" data-price="319" data-name="Úrazové poj. řidiče a cestujících"><span class="toggle-track"></span></span>
+              <span class="addon-name">Úrazové poj. řidiče a cestujících</span>
+              <span class="addon-price"><span class="addon-price-val">+ 319 Kč</span><span class="addon-price-sub">za rok</span></span>
+            </label>
+            <button class="info-link cb-info-link" data-info="urazove">Co myslíme úrazovým pojištěním řidiče a cestujících</button>
+          </div>
+          <div class="addon-block">
+            <label class="cb-item addon-item">
+              <span class="toggle-switch"><input type="checkbox" id="a-smrt" data-price="99" data-name="Smrt obou rodičů ve vozidle"><span class="toggle-track"></span></span>
+              <span class="addon-name">Smrt obou rodičů ve vozidle</span>
+              <span class="addon-price"><span class="addon-price-val">+ 99 Kč</span><span class="addon-price-sub">za rok</span></span>
+            </label>
+            <button class="info-link cb-info-link" data-info="smrt">Co myslíme smrtí obou rodičů ve vozidle</button>
+          </div>
+          <div class="addon-block">
+            <label class="cb-item addon-item">
+              <span class="toggle-switch"><input type="checkbox" id="a-pravni" data-price="199" data-name="Právní ochrana"><span class="toggle-track"></span></span>
+              <span class="addon-name">Právní ochrana</span>
+              <span class="addon-price"><span class="addon-price-val">+ 199 Kč</span><span class="addon-price-sub">za rok</span></span>
+            </label>
+            <button class="info-link cb-info-link" data-info="pravni">Co myslíme právní ochranou</button>
+          </div>
+          <div class="addon-block">
+            <label class="cb-item addon-item">
+              <span class="toggle-switch"><input type="checkbox" id="a-pneumatiky" data-price="249" data-name="Pneumatiky a disky"><span class="toggle-track"></span></span>
+              <span class="addon-name">Pneumatiky a disky</span>
+              <span class="addon-price"><span class="addon-price-val">+ 249 Kč</span><span class="addon-price-sub">za rok</span></span>
+            </label>
+            <button class="info-link cb-info-link" data-info="pneumatiky">Co myslíme pneumatikami a disky</button>
+          </div>
+          <div class="addon-block">
+            <label class="cb-item addon-item">
+              <span class="toggle-switch"><input type="checkbox" id="a-gap" data-price="349" data-name="GAP pojištění"><span class="toggle-track"></span></span>
+              <span class="addon-name">GAP pojištění</span>
+              <span class="addon-price"><span class="addon-price-val">+ 349 Kč</span><span class="addon-price-sub">za rok</span></span>
+            </label>
+            <button class="info-link cb-info-link" data-info="gap">Co myslíme GAP pojištěním</button>
+          </div>
+          <div class="addon-block">
+            <label class="cb-item addon-item">
+              <span class="toggle-switch"><input type="checkbox" id="a-zavazadla" data-price="129" data-name="Zavazadla"><span class="toggle-track"></span></span>
+              <span class="addon-name">Zavazadla</span>
+              <span class="addon-price"><span class="addon-price-val">+ 129 Kč</span><span class="addon-price-sub">za rok</span></span>
+            </label>
+            <button class="info-link cb-info-link" data-info="zavazadla">Co myslíme zavazadly</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="expand-btn" id="btn-more">+ Zobrazit další pojištění (6)</button>
     </div>
   </div>
 
@@ -1361,11 +1403,19 @@ document.querySelectorAll('.cb-item input[type="checkbox"]').forEach(cb => {
   cb.addEventListener('change', update);
 });
 
+// ── ADDON PILLS ───────────────────────────────────────────
+document.querySelectorAll('.addon-item').forEach(item => {
+  const cb = item.querySelector('input[type="checkbox"]');
+  const sync = () => item.classList.toggle('is-selected', cb.checked);
+  cb.addEventListener('change', sync);
+  sync();
+});
+
 // ── EXPAND ADDONS ─────────────────────────────────────────
 document.getElementById('btn-more').addEventListener('click', function() {
   S.extrasOpen = !S.extrasOpen;
   document.getElementById('extra-addons').classList.toggle('is-open', S.extrasOpen);
-  this.textContent = S.extrasOpen ? '– Skrýt další pojištění' : '+ Zobrazit další pojištění (4)';
+  this.textContent = S.extrasOpen ? '– Skrýt další pojištění' : '+ Zobrazit další pojištění (6)';
 });
 
 // ── FREKVENCE PLATBY ─────────────────────────────────────
